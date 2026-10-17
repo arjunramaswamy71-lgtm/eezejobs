@@ -63,7 +63,9 @@ AEI_RELEASE = "release_2025_03_27"
 
 
 def all_tickers():
-    tickers = set(BENCHMARKS)
+    import companies
+
+    tickers = set(BENCHMARKS) | set(companies.tickers())
     for field in FIELDS.values():
         tickers.update(field["hedge_basket"])
     return sorted(tickers)
@@ -84,3 +86,9 @@ OEWS_URLS = [
     "https://www.bls.gov/oes/special-requests/oesm25nat.zip",
     "https://www.bls.gov/oes/special-requests/oesm24nat.zip",
 ]
+
+# Every company listed with the SEC, for the "where do you work" search
+SEC_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
+
+# Official converter from 2010 job codes to the 2018 codes BLS uses now
+SOC_CROSSWALK_URL = "https://www.bls.gov/soc/2018/soc_2010_to_2018_crosswalk.xlsx"

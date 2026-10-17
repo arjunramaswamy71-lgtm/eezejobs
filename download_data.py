@@ -77,11 +77,36 @@ def get_oews():
     raise RuntimeError("no OEWS file found")
 
 
+def get_sec_companies():
+    import requests
+
+    if not config.CONTACT_EMAIL:
+        raise ValueError("set CONTACT_EMAIL in src/config.py first")
+    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    r = requests.get(config.SEC_TICKERS_URL, headers=headers, timeout=60)
+    r.raise_for_status()
+    df = pd.DataFrame(r.json().values())
+    df.to_csv(RAW / "sec_companies.csv", index=False)
+    return f"{len(df):,} companies"
+
+
+def get_crosswalk():
+    import requests
+
+    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    r = requests.get(config.SOC_CROSSWALK_URL, headers=headers, timeout=60)
+    r.raise_for_status()
+    (RAW / "soc_crosswalk.xlsx").write_bytes(r.content)
+    return f"{len(r.content) / 1e3:.0f} KB"
+
+
 for name, job in [("Indeed job postings", get_indeed),
                   ("Anthropic Economic Index", get_aei),
                   ("Stock prices", get_prices),
                   ("AI exposure studies", get_exposure),
-                  ("BLS jobs and wages", get_oews)]:
+                  ("BLS jobs and wages", get_oews),
+                  ("SEC company list", get_sec_companies),
+                  ("Job code converter", get_crosswalk)]:
     print(f"Downloading {name}...")
     try:
         results[name] = "OK, " + job()

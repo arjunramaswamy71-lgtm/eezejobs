@@ -25,6 +25,40 @@ def soc6(code):
     return str(code).strip()[:7]
 
 
+def load_crosswalk():
+    """Map old 2010 job codes to the 2018 codes. Returns an empty map if the file isn't downloaded."""
+    path = RAW / "soc_crosswalk.xlsx"
+    if not path.exists():
+        print("Job code converter missing, run download_data.py")
+        return {}
+    raw = pd.read_excel(path, header=None, dtype=str)
+    head = raw.index[raw.apply(lambda r: r.str.contains("2010 SOC Code", na=False).any(), axis=1)][0]
+    df = raw.iloc[head + 1:].copy()
+    df.columns = raw.iloc[head].str.strip()
+    old = [c for c in df.columns if "2010" in str(c) and "Code" in str(c)][0]
+    new = [c for c in df.columns if "2018" in str(c) and "Code" in str(c)][0]
+    df = df[[old, new]].dropna()
+    out = {}
+    for a, b in zip(df[old].str.strip(), df[new].str.strip()):
+        out.setdefault(a, []).append(b)
+    return out
+
+
+XWALK = None
+
+
+def to2018(df, col="soc"):
+    """Rewrite a table's 2010 codes as 2018 codes. One old code can split into several new ones."""
+    global XWALK
+    if XWALK is None:
+        XWALK = load_crosswalk()
+    if not XWALK:
+        return df
+    df = df.copy()
+    df[col] = df[col].map(lambda c: XWALK.get(c, [c]))
+    return df.explode(col)
+
+
 def anthropic_scores():
     signals = scoring.load_task_signals()
     tasks = pd.read_csv(scoring.AEI / "onet_task_statements.csv")
@@ -33,6 +67,7 @@ def anthropic_scores():
     used = tasks["pct"].fillna(0) > 0
     tasks["task_score"] = used * (50 + 50 * tasks["automation_share"].fillna(0))
     tasks["soc"] = tasks["O*NET-SOC Code"].map(soc6)
+    tasks = to2018(tasks)
     return tasks.groupby("soc")["task_score"].mean().rename("anthropic_claude")
 
 
@@ -52,16 +87,23 @@ def microsoft_scores():
 def felten_scores():
     df = pd.read_excel(EXP / "felten_aioe.xlsx", sheet_name="Appendix A")
     df["soc"] = df["SOC Code"].map(soc6)
+    df = to2018(df)
     return df.groupby("soc")["AIOE"].mean().rename("felten_aioe")
 
 
 def job_titles():
+    new = pd.read_csv(EXP / "openai_occ_level.csv")
+    new["soc"] = new["O*NET-SOC Code"].map(soc6)
+    new["is_main"] = new["O*NET-SOC Code"].str.endswith(".00")
+    new = new.sort_values(["soc", "is_main"], ascending=[True, False]).groupby("soc")["Title"].first()
     tasks = pd.read_csv(scoring.AEI / "onet_task_statements.csv")
     tasks["soc"] = tasks["O*NET-SOC Code"].map(soc6)
+    tasks = to2018(tasks)
     # Use the plain title for codes ending in .00, otherwise the first one listed
     tasks["is_main"] = tasks["O*NET-SOC Code"].str.endswith(".00")
     tasks = tasks.sort_values(["soc", "is_main"], ascending=[True, False])
-    return tasks.groupby("soc")["Title"].first().rename("title")
+    old = tasks.groupby("soc")["Title"].first()
+    return new.combine_first(old).rename("title")
 
 
 def build_exposure():

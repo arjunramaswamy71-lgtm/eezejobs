@@ -35,10 +35,19 @@ def tasks_table():
     statements = pd.read_csv(scoring.AEI / "onet_task_statements.csv")
     statements["key"] = statements["Task"].str.strip().str.lower()
     tasks = statements.merge(scoring.load_task_signals(), on="key", how="left")
+    cols = ["gpt4_exposure", "human_exposure_agg", "gpt4_automation"]
     gpt = pd.read_csv(exposure.EXP / "openai_full_labelset.tsv", sep="\t",
-                      usecols=["Task ID", "gpt4_exposure", "human_exposure_agg", "gpt4_automation"])
-    tasks = tasks.merge(gpt, on="Task ID", how="left")
+                      usecols=["Task ID", "Task"] + cols)
+    gpt["key"] = gpt["Task"].str.strip().str.lower()
+    # Match OpenAI ratings by task ID first, then by task wording,
+    # since O*NET renumbers some tasks between versions
+    by_id = tasks[["Task ID"]].merge(gpt.drop_duplicates("Task ID")[["Task ID"] + cols], on="Task ID", how="left")
+    by_text = tasks[["key"]].merge(gpt.drop_duplicates("key")[["key"] + cols], on="key", how="left")
+    for c in cols:
+        tasks[c] = by_id[c].values
+        tasks[c] = tasks[c].fillna(pd.Series(by_text[c].values, index=tasks.index))
     tasks["soc"] = tasks["O*NET-SOC Code"].map(exposure.soc6)
+    tasks = exposure.to2018(tasks)
     return tasks.rename(columns={
         "O*NET-SOC Code": "onet_code", "Title": "title", "Task ID": "task_id", "Task": "task",
         "Task Type": "task_type", "pct": "claude_usage_pct", "automation_share": "claude_automation_share",

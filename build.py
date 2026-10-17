@@ -51,3 +51,17 @@ print("\nDatabase tables:", [r[0] for r in con.execute("SHOW TABLES").fetchall()
 print(con.execute("SELECT COUNT(*) AS jobs, SUM(employment) AS workers, ROUND(SUM(total_pay_billions)) AS pay_b, SUM(employment) FILTER (WHERE high_exposure) AS high_exp_workers, ROUND(SUM(total_pay_billions) FILTER (WHERE high_exposure)) AS high_exp_pay_b FROM wages_at_risk").df().round(0).to_string(index=False))
 print(con.execute("SELECT title, ROUND(exposure_score) AS score, employment, ROUND(total_pay_billions,1) AS pay_b FROM wages_at_risk WHERE high_exposure ORDER BY total_pay_billions DESC LIMIT 10").df().to_string(index=False))
 con.close()
+
+# Small files the website reads, so it works without the big database
+con = database.duckdb.connect(str(database.DB_PATH), read_only=True)
+con.execute(f"COPY jobs TO '{OUT / 'jobs.csv'}' (HEADER)")
+con.execute(f"""COPY (
+    SELECT soc, onet_code, task, task_type,
+           COALESCE(claude_usage_pct, 0) > 0 AS claude_used,
+           ROUND(COALESCE(claude_automation_share, 0), 2) AS claude_automation_share,
+           human_exposure_agg AS human_exposure,
+           gpt4_exposure
+    FROM tasks
+) TO '{OUT / 'tasks.csv'}' (HEADER)""")
+con.close()
+print("Website files written to data/processed")
