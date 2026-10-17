@@ -1,0 +1,10 @@
+field,code,occupation,risk_score,tasks_total,tasks_using_ai,automation_share
+finance_accounting,13-2011.01,Accountants,26.0,16,7,0.19
+finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks",28.0,30,12,0.4
+finance_accounting,13-2051.00,Financial Analysts,29.7,18,8,0.34
+legal,23-2011.00,Paralegals and Legal Assistants,14.4,12,2,0.73
+legal,23-1011.00,Lawyers,17.0,22,6,0.24
+legal,43-6012.00,Legal Secretaries and Administrative Assistants,17.8,13,3,0.55
+customer_service,43-4051.00,Customer Service Representatives,19.9,15,5,0.19
+customer_service,41-9041.00,Telemarketers,9.6,12,2,0.15
+customer_service,43-4171.00,Receptionists and Information Clerks,32.4,19,9,0.37

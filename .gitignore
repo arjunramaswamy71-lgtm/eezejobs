@@ -179,3 +179,9 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# Raw downloads, rebuild with download_data.py
+data/raw/
+
+# Database is rebuilt by build.py
+data/*.duckdb
+__pycache__/

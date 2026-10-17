@@ -1,0 +1,158 @@
+Task,Task Type,ai_used,automation_share,task_score,level,field,code,occupation
+"Prepare, examine, or analyze accounting records, financial statements, or other financial reports to assess accuracy, completeness, and conformance to reporting and procedural standards.",Core,True,0.0,50.0,Medium,finance_accounting,13-2011.01,Accountants
+Report to management regarding the finances of establishment.,Core,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+Establish tables of accounts and assign entries to proper accounts.,Core,True,0.0,50.0,Medium,finance_accounting,13-2011.01,Accountants
+"Develop, implement, modify, and document recordkeeping and accounting systems, making use of current computer technology.",Core,True,0.450315457413249,72.51577287066246,High,finance_accounting,13-2011.01,Accountants
+"Compute taxes owed and prepare tax returns, ensuring compliance with payment, reporting, or other tax requirements.",Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+Maintain or examine the records of government agencies.,Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+"Advise clients in areas such as compensation, employee health care benefits, the design of accounting or data processing systems, or long-range tax or estate plans.",Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+"Develop, maintain, and analyze budgets, preparing periodic reports that compare budgeted costs to actual costs.",Supplemental,True,0.5272727272727273,76.36363636363637,High,finance_accounting,13-2011.01,Accountants
+Provide internal and external auditing services for businesses or individuals.,Supplemental,True,0.0,50.0,Medium,finance_accounting,13-2011.01,Accountants
+"Analyze business operations, trends, costs, revenues, financial commitments, and obligations to project future revenues and expenses or to provide advice.",Supplemental,True,0.3485804416403785,67.42902208201892,Medium,finance_accounting,13-2011.01,Accountants
+"Advise management about issues such as resource utilization, tax strategies, and the assumptions underlying budget forecasts.",Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+Represent clients before taxing authorities and provide support during litigation involving financial issues.,Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+Prepare forms and manuals for accounting and bookkeeping personnel and direct their work activities.,Supplemental,True,0.0,50.0,Medium,finance_accounting,13-2011.01,Accountants
+"Appraise, evaluate, and inventory real property and equipment, recording information such as the description, value, and location of property.",Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+"Survey operations to ascertain accounting needs and to recommend, develop, or maintain solutions to business and financial problems.",Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+Serve as bankruptcy trustees or business valuators.,Supplemental,False,0.0,0.0,Low,finance_accounting,13-2011.01,Accountants
+"Operate computers programmed with accounting software to record, store, and analyze information.",Core,True,0.9999999999999999,100.0,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Check figures, postings, and documents for correct entry, mathematical accuracy, and proper codes.",Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Classify, record, and summarize numerical and financial data to compile and keep financial records, using journals and ledgers or computers.",Core,True,0.3894736842105263,69.47368421052632,Medium,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Debit, credit, and total accounts on computer spreadsheets and databases, using specialized accounting software.",Core,True,0.4705882352941176,73.52941176470588,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Operate 10-key calculators, typewriters, and copy machines to perform calculations and produce documents.",Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Receive, record, and bank cash, checks, and vouchers.",Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Comply with federal, state, and company policies, procedures, and regulations.",Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Compile statistical, financial, accounting, or auditing reports and tables pertaining to such matters as cash receipts, expenditures, accounts payable and receivable, and profits and losses.",Core,True,0.5499999999999999,77.5,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Code documents according to company procedures.,Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Reconcile or note and report discrepancies found in records.,Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Access computerized financial information to answer general questions as well as those related to specific accounts.,Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Match order forms with invoices, and record the necessary information.",Core,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Perform general office duties, such as filing, answering telephones, and handling routine correspondence.",Core,True,0.0,50.0,Medium,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Perform personal bookkeeping services.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Prepare bank deposits by compiling data from cashiers, verifying and balancing receipts, and sending cash, checks, or other forms of payment to banks.",Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Prepare trial balances of books.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Calculate, prepare, and issue bills, invoices, account statements, and other financial statements according to established procedures.",Supplemental,True,0.0,50.0,Medium,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Calculate and prepare checks for utilities, taxes, and other payments.",Supplemental,True,0.0,50.0,Medium,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Compute deductions for income and social security taxes.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Prepare and process payroll information.,Supplemental,True,0.6341463414634146,81.70731707317073,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Compare computer printouts to manually maintained journals to determine if they match.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Reconcile records of bank transactions.,Supplemental,True,0.0,50.0,Medium,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Transfer details from separate journals to general ledgers or data processing sheets.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Complete and submit tax forms and returns, workers' compensation forms, pension contribution forms, and other government documents.",Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Prepare purchase orders and expense reports.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Monitor status of loans and accounts to ensure that payments are up to date.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Perform financial calculations, such as amounts due, interest charges, balances, discounts, equity, and principal.",Supplemental,True,0.5579399141630901,77.8969957081545,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Calculate costs of materials, overhead, and other expenses, based on estimates, quotations and price lists.",Supplemental,True,0.6298701298701298,81.49350649350649,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Compile budget data and documents, based on estimated revenues and expenses and previous budgets.",Supplemental,True,0.5454545454545453,77.27272727272727,High,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+Maintain inventory records.,Supplemental,False,0.0,0.0,Low,finance_accounting,43-3031.00,"Bookkeeping, Accounting, and Auditing Clerks"
+"Draw charts and graphs, using computer spreadsheets, to illustrate technical reports.",Core,True,0.4235807860262008,71.17903930131004,High,finance_accounting,13-2051.00,Financial Analysts
+"Inform investment decisions by analyzing financial information to forecast business, industry, or economic conditions.",Core,True,0.2785714285714286,63.92857142857143,Medium,finance_accounting,13-2051.00,Financial Analysts
+"Monitor developments in the fields of industrial technology, business, finance, and economic theory.",Core,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Interpret data on price, yield, stability, future investment-risk trends, economic influences, and other factors affecting investment programs.",Core,True,0.1745602165087956,58.72801082543978,Medium,finance_accounting,13-2051.00,Financial Analysts
+"Monitor fundamental economic, industrial, and corporate developments by analyzing information from financial publications and services, investment banking firms, government agencies, trade publications, company sources, or personal interviews.",Core,True,0.26865671641791045,63.43283582089552,Medium,finance_accounting,13-2051.00,Financial Analysts
+"Recommend investments and investment timing to companies, investment firm staff, or the public.",Supplemental,True,0.4093264248704662,70.46632124352331,High,finance_accounting,13-2051.00,Financial Analysts
+Determine the prices at which securities should be syndicated and offered to the public.,Supplemental,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Prepare plans of action for investment, using financial analyses.",Supplemental,True,0.4886363636363634,74.43181818181817,High,finance_accounting,13-2051.00,Financial Analysts
+Evaluate and compare the relative quality of various securities in a given industry.,Supplemental,True,0.36470588235294105,68.23529411764704,Medium,finance_accounting,13-2051.00,Financial Analysts
+"Present oral or written reports on general economic trends, individual corporations, and entire industries.",Supplemental,True,0.28684210526315784,64.34210526315789,Medium,finance_accounting,13-2051.00,Financial Analysts
+"Contact brokers and purchase investments for companies, according to company policy.",Supplemental,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+Collaborate with investment bankers to attract new corporate clients to securities firms.,Supplemental,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+Conduct financial analyses related to investments in green construction or green retrofitting projects.,,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Determine the financial viability of alternative energy generation or fuel production systems, based on power source or feedstock quality, financing costs, potential revenue, and total project costs.",,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+Evaluate financial viability and potential environmental benefits of cleantech innovations to secure capital investments from sources such as venture capital firms and government green fund grants.,,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Forecast or analyze financial costs associated with climate change or other environmental factors, such as clean water supply and demand.",,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Identify potential financial investments that are environmentally sound, considering issues such as carbon emissions and biodiversity.",,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Research and recommend environmentally-related financial products, such as energy futures, water rights, carbon credits, government environmental funds, and cleantech industry funds and company stocks.",,False,0.0,0.0,Low,finance_accounting,13-2051.00,Financial Analysts
+"Prepare affidavits or other documents, such as legal correspondence, and organize and maintain documents in paper or electronic filing system.",Core,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+Prepare for trial by performing tasks such as organizing exhibits.,Core,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+"Prepare legal documents, including briefs, pleadings, appeals, wills, contracts, and real estate closing statements.",Core,True,0.4561797752808988,72.80898876404494,High,legal,23-2011.00,Paralegals and Legal Assistants
+Meet with clients and other professionals to discuss details of case.,Core,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+File pleadings with court clerk.,Core,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+"Gather and analyze research data, such as statutes, decisions, and legal articles, codes, and documents.",Core,True,1.0,100.0,High,legal,23-2011.00,Paralegals and Legal Assistants
+Call upon witnesses to testify at hearing.,Supplemental,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+"Investigate facts and law of cases and search pertinent sources, such as public records, to determine causes of action and to prepare cases.",Supplemental,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+"Direct and coordinate law office activity, including delivery of subpoenas.",Supplemental,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+Keep and monitor legal volumes to ensure that law library is up-to-date.,Supplemental,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+Appraise and inventory real and personal property for estate planning.,Supplemental,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+"Arbitrate disputes between parties and assist in the real estate closing process, such as by reviewing title searches.",Supplemental,False,0.0,0.0,Low,legal,23-2011.00,Paralegals and Legal Assistants
+Represent clients in court or before government agencies.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Present evidence to defend clients or prosecute defendants in criminal or civil litigation.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Select jurors, argue motions, meet with judges, and question witnesses during the course of a trial.",Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Study Constitution, statutes, decisions, regulations, and ordinances of quasi-judicial bodies to determine ramifications for cases.",Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Interpret laws, rulings and regulations for individuals and businesses.",Core,True,0.09852941176470585,54.92647058823529,Medium,legal,23-1011.00,Lawyers
+Present and summarize cases to judges and juries.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Prepare legal briefs and opinions, and file appeals in state and federal courts of appeal.",Core,True,0.5849056603773585,79.24528301886792,High,legal,23-1011.00,Lawyers
+"Analyze the probable outcomes of cases, using knowledge of legal precedents.",Core,True,0.3217391304347826,66.08695652173913,Medium,legal,23-1011.00,Lawyers
+Examine legal data to determine advisability of defending or prosecuting lawsuit.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Evaluate findings and develop strategies and arguments in preparation for presentation of cases.,Core,True,0.0,50.0,Medium,legal,23-1011.00,Lawyers
+"Advise clients concerning business transactions, claim liability, advisability of prosecuting or defending lawsuits, or legal rights and obligations.",Core,True,0.0,50.0,Medium,legal,23-1011.00,Lawyers
+"Gather evidence to formulate defense or to initiate legal actions, by such means as interviewing clients and witnesses to ascertain the facts of a case.",Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Negotiate settlements of civil disputes.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Prepare and draft legal documents, such as wills, deeds, patent applications, mortgages, leases, and contracts.",Core,True,0.46078431372549017,73.0392156862745,High,legal,23-1011.00,Lawyers
+Confer with colleagues with specialties in appropriate areas of legal issue to establish and verify bases for legal proceedings.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Supervise legal assistants.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Perform administrative and management functions related to the practice of law.,Core,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Probate wills and represent and advise executors and administrators of estates.,Supplemental,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+Search for and examine public and other legal records to write opinions or establish ownership.,Supplemental,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Act as agent, trustee, guardian, or executor for businesses or individuals.",Supplemental,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Help develop federal and state programs, draft and interpret laws and legislation, and establish enforcement procedures.",Supplemental,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Work in environmental law, representing public interest groups, waste disposal companies, or construction firms in their dealings with state and federal agencies.",Supplemental,False,0.0,0.0,Low,legal,23-1011.00,Lawyers
+"Prepare and process legal documents and papers, such as summonses, subpoenas, complaints, appeals, motions, and pretrial agreements.",Core,True,0.640625,82.03125,High,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Mail, fax, or arrange for delivery of legal correspondence to clients, witnesses, and court officials.",Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+Receive and place telephone calls.,Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Organize and maintain law libraries, documents, and case files.",Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+Schedule and make appointments.,Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Make photocopies of correspondence, documents, and other printed matter.",Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Assist attorneys in collecting information such as employment, medical, and other records.",Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+Draft and type office memos.,Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Complete various forms, such as accident reports, trial and courtroom requests, and applications for clients.",Core,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+Prepare and distribute invoices to bill clients or pay account expenses.,Supplemental,True,1.0,100.0,High,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Attend legal meetings, such as client interviews, hearings, or depositions, and take notes.",Supplemental,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+Review legal publications and perform database searches to identify laws and court decisions relevant to pending cases.,Supplemental,True,0.0,50.0,Medium,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+Submit articles and information from searches to attorneys for review and approval for use.,Supplemental,False,0.0,0.0,Low,legal,43-6012.00,Legal Secretaries and Administrative Assistants
+"Confer with customers by telephone or in person to provide information about products or services, take or enter orders, cancel accounts, or obtain details of complaints.",Core,True,0.36363636363636337,68.18181818181817,Medium,customer_service,43-4051.00,Customer Service Representatives
+Check to ensure that appropriate changes were made to resolve customers' problems.,Core,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+"Keep records of customer interactions or transactions, recording details of inquiries, complaints, or comments, as well as actions taken.",Core,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+"Resolve customers' service or billing complaints by performing activities such as exchanging merchandise, refunding money, or adjusting bills.",Core,True,0.3908045977011494,69.54022988505747,Medium,customer_service,43-4051.00,Customer Service Representatives
+"Complete contract forms, prepare change of address records, or issue service discontinuance orders, using computers.",Core,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+Refer unresolved customer grievances to designated departments for further investigation.,Supplemental,True,0.0,50.0,Medium,customer_service,43-4051.00,Customer Service Representatives
+"Determine charges for services requested, collect deposits or payments, or arrange for billing.",Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+Contact customers to respond to inquiries or to notify them of claim investigation results or any planned adjustments.,Supplemental,True,0.0,50.0,Medium,customer_service,43-4051.00,Customer Service Representatives
+Solicit sales of new or additional services or products.,Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+Order tests that could determine the causes of product malfunctions.,Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+"Obtain and examine all relevant information to assess validity of complaints and to determine possible causes, such as extreme weather conditions that could increase utility bills.",Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+"Review claims adjustments with dealers, examining parts claimed to be defective, and approving or disapproving dealers' claims.",Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+Review insurance policy terms to determine whether a particular loss is covered by insurance.,Supplemental,True,0.21686746987951808,60.8433734939759,Medium,customer_service,43-4051.00,Customer Service Representatives
+Compare disputed merchandise with original requisitions and information from invoices and prepare invoices for returned goods.,Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+"Recommend improvements in products, packaging, shipping, service, or billing methods and procedures to prevent future problems.",Supplemental,False,0.0,0.0,Low,customer_service,43-4051.00,Customer Service Representatives
+"Deliver prepared sales talks, reading from scripts that describe products or services, to persuade potential customers to purchase a product or service or to make a donation.",Core,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+"Contact businesses or private individuals by telephone to solicit sales for goods or services, or to request donations for charitable causes.",Core,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+"Explain products or services and prices, and answer questions from customers.",Core,True,0.3032258064516128,65.16129032258064,Medium,customer_service,41-9041.00,Telemarketers
+"Obtain customer information such as name, address, and payment method, and enter orders into computers.",Core,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+"Record names, addresses, purchases, and reactions of prospects contacted.",Core,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+Adjust sales scripts to better target the needs and interests of specific individuals.,Core,True,0.0,50.0,Medium,customer_service,41-9041.00,Telemarketers
+"Obtain names and telephone numbers of potential customers from sources such as telephone directories, magazine reply cards, and lists purchased from other organizations.",Supplemental,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+Answer telephone calls from potential customers who have been solicited through advertisements.,Supplemental,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+Telephone or write letters to respond to correspondence from customers or to follow up initial sales contacts.,Supplemental,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+"Maintain records of contacts, accounts, and orders.",Supplemental,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+Schedule appointments for sales representatives to meet with prospective customers or for customers to attend sales presentations.,Supplemental,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+Conduct client or market surveys to obtain information about potential customers.,Supplemental,False,0.0,0.0,Low,customer_service,41-9041.00,Telemarketers
+"Operate telephone switchboard to answer, screen, or forward calls, providing information, taking messages, or scheduling appointments.",Core,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+"Greet persons entering establishment, determine nature and purpose of visit, and direct or escort them to specific destinations.",Core,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+Schedule appointments and maintain and update appointment calendars.,Core,True,0.7142857142857143,85.71428571428572,High,customer_service,43-4171.00,Receptionists and Information Clerks
+Hear and resolve complaints from customers or the public.,Core,True,0.0,50.0,Medium,customer_service,43-4171.00,Receptionists and Information Clerks
+File and maintain records.,Core,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+Receive payment and record receipts for services.,Core,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+"Perform administrative support tasks, such as proofreading, transcribing handwritten information, or operating calculators or computers to work with pay records, invoices, balance sheets, or other documents.",Core,True,0.0,50.0,Medium,customer_service,43-4171.00,Receptionists and Information Clerks
+"Transmit information or documents to customers, using computer, mail, or facsimile machine.",Core,True,0.6840390879478827,84.20195439739413,High,customer_service,43-4171.00,Receptionists and Information Clerks
+Analyze data to determine answers to questions from customers or members of the public.,Core,True,0.40791476407914756,70.39573820395738,High,customer_service,43-4171.00,Receptionists and Information Clerks
+"Collect, sort, distribute, or prepare mail, messages, or courier deliveries.",Core,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+"Provide information about establishment, such as location of departments or offices, employees within the organization, or services provided.",Core,True,0.55,77.5,High,customer_service,43-4171.00,Receptionists and Information Clerks
+"Calculate and quote rates for tours, stocks, insurance policies, or other products or services.",Supplemental,True,0.6197916666666666,80.98958333333333,High,customer_service,43-4171.00,Receptionists and Information Clerks
+"Process and prepare memos, correspondence, travel vouchers, or other documents.",Supplemental,True,0.3333333333333333,66.66666666666666,Medium,customer_service,43-4171.00,Receptionists and Information Clerks
+Keep a current record of staff members' whereabouts and availability.,Supplemental,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+Take orders for merchandise or materials and send them to the proper departments to be filled.,Supplemental,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+"Perform duties, such as taking care of plants or straightening magazines to maintain lobby or reception area.",Supplemental,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+Schedule space or equipment for special programs and prepare lists of participants.,Supplemental,True,0.0,50.0,Medium,customer_service,43-4171.00,Receptionists and Information Clerks
+Enroll individuals to participate in programs and notify them of their acceptance.,Supplemental,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
+"Conduct tours or deliver talks describing features of public facilities, such as a historic site or national park.",Supplemental,False,0.0,0.0,Low,customer_service,43-4171.00,Receptionists and Information Clerks
