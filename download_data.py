@@ -100,13 +100,47 @@ def get_crosswalk():
     return f"{len(r.content) / 1e3:.0f} KB"
 
 
+def get_onet():
+    import io
+    import re
+    import zipfile
+
+    import requests
+
+    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    urls = []
+    try:
+        page = requests.get(config.ONET_PAGE, headers=headers, timeout=60).text
+        urls += [("https://www.onetcenter.org" + m if m.startswith("/") else m)
+                 for m in re.findall(r'href="([^"]*db_\d+_\d+_text\.zip)"', page)]
+    except Exception:
+        pass
+    urls += [f"https://www.onetcenter.org/dl_files/database/db_{v}_text.zip" for v in config.ONET_VERSIONS]
+    folder = RAW / "onet"
+    folder.mkdir(exist_ok=True)
+    for url in dict.fromkeys(urls):
+        r = requests.get(url, headers=headers, timeout=180)
+        if r.status_code != 200:
+            continue
+        with zipfile.ZipFile(io.BytesIO(r.content)) as z:
+            got = 0
+            for name in z.namelist():
+                base = name.split("/")[-1]
+                if base in config.ONET_FILES or base.lower() in [f.lower() for f in config.ONET_FILES]:
+                    (folder / base).write_bytes(z.read(name))
+                    got += 1
+        return f"{url.split('/')[-1]}, {got} files"
+    raise RuntimeError("no O*NET database file found")
+
+
 for name, job in [("Indeed job postings", get_indeed),
                   ("Anthropic Economic Index", get_aei),
                   ("Stock prices", get_prices),
                   ("AI exposure studies", get_exposure),
                   ("BLS jobs and wages", get_oews),
                   ("SEC company list", get_sec_companies),
-                  ("Job code converter", get_crosswalk)]:
+                  ("Job code converter", get_crosswalk),
+                  ("O*NET related jobs and skills", get_onet)]:
     print(f"Downloading {name}...")
     try:
         results[name] = "OK, " + job()

@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 import config
+import panel_scores
 import scoring
 
 RAW = Path(__file__).parent.parent / "data" / "raw"
@@ -17,6 +18,7 @@ SOURCES = {
     "openai_human": "Human expert rating of the same tasks (Eloundou et al.)",
     "microsoft_copilot": "Real Bing Copilot usage across job tasks (Tomlinson et al.)",
     "felten_aioe": "AI benchmark progress mapped to job abilities (Felten, Raj, Seamans)",
+    "ai_panel": "Our own panel: 5 AI models rated every task (GPT, Gemini, Claude, Llama, DeepSeek)",
 }
 
 
@@ -106,13 +108,29 @@ def job_titles():
     return new.combine_first(old).rename("title")
 
 
+def panel_by_job():
+    """The AI panel's score for each job, one column per model, plus their average."""
+    tasks = pd.read_csv(scoring.AEI / "onet_task_statements.csv")
+    tasks["soc"] = tasks["O*NET-SOC Code"].map(soc6)
+    tasks = to2018(tasks).rename(columns={"Task": "task"})
+    out = panel_scores.job_scores(tasks)
+    if out.empty:
+        return out
+    out["ai_panel"] = out.mean(axis=1)
+    return out
+
+
 def build_exposure():
+    panel = panel_by_job()
     raw = pd.concat(
-        [job_titles(), anthropic_scores(), openai_scores(), microsoft_scores(), felten_scores()],
+        [job_titles(), anthropic_scores(), openai_scores(), microsoft_scores(), felten_scores(), panel],
         axis=1,
     )
     raw = raw[raw["title"].notna()]
-    sources = list(SOURCES)
+    sources = [k for k in SOURCES if k in raw]
+    # Each panel model also gets its own percentile, for the "do the AIs agree" view
+    for c in [c for c in raw.columns if c.startswith("panel_")]:
+        raw[f"{c}_pct"] = raw[c].rank(pct=True) * 100
     # Each source uses a different scale, so compare jobs by percentile, 0 to 100
     pct = raw[sources].rank(pct=True) * 100
     pct.columns = [f"{c}_pct" for c in sources]

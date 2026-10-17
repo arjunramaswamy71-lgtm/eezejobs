@@ -74,7 +74,7 @@ input:focus { border-color: var(--brand); outline: none; background: var(--card)
 .list .sub { color: var(--ink-3); font-size: 0.85rem; }
 .btn { font: inherit; font-weight: 700; font-size: 1.05rem; border: 0; border-radius: var(--radius); padding: 14px 22px; background: var(--brand); color: #fff; cursor: pointer; }
 .btn:hover { filter: brightness(1.08); }
-.btn.quiet { background: transparent; color: var(--brand); border: 1.5px solid var(--line); }
+.btn.quiet { background: transparent; color: var(--brand); border: 1.5px solid var(--line); text-decoration: none; display: inline-block; }
 .err { color: var(--down); font-size: 0.9rem; margin: 6px 0 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; align-items: center; }
 .chip { font: inherit; font-size: 0.95rem; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 7px 14px; border-radius: 999px; cursor: pointer; text-decoration: none; }
@@ -187,3 +187,11 @@ details summary { cursor: pointer; color: var(--brand); font-weight: 700; margin
 .sigtable > div { display: grid; grid-template-columns: 1.3fr 0.8fr 1fr 1fr 0.9fr; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); align-items: center; }
 .sigtable .sh { color: var(--ink-3); font-size: 0.85rem; border-top: 0; }
 @media (max-width: 560px) { .sigtable > div { grid-template-columns: 1fr 1fr; } .sigtable .sh { display: none; } }
+
+/* Safer jobs */
+.safer { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 16px; }
+.safe-card { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border: 1.5px solid var(--line); border-radius: var(--radius); color: var(--ink); text-decoration: none; }
+.safe-card:hover { border-color: var(--you); }
+.safe-title { font-family: var(--head); font-weight: 700; font-size: 1.05rem; line-height: 1.25; }
+.safe-nums b { color: var(--you); font-size: 1.1rem; }
+.tag { align-self: flex-start; font-size: 0.78rem; font-weight: 700; color: var(--you); background: color-mix(in srgb, var(--you) 12%, transparent); padding: 2px 9px; border-radius: 999px; }

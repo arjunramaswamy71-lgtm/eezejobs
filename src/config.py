@@ -92,3 +92,8 @@ SEC_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 
 # Official converter from 2010 job codes to the 2018 codes BLS uses now
 SOC_CROSSWALK_URL = "https://www.bls.gov/soc/2018/soc_2010_to_2018_crosswalk.xlsx"
+
+# O*NET database (related jobs, skills, education level). Newest version first.
+ONET_PAGE = "https://www.onetcenter.org/database.html"
+ONET_VERSIONS = ["31_0", "30_3", "30_2", "30_1", "30_0", "29_3", "29_2"]
+ONET_FILES = ["Related Occupations.txt", "Skills.txt", "Knowledge.txt", "Work Activities.txt", "Job Zones.txt", "Occupation Data.txt"]

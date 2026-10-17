@@ -41,7 +41,9 @@ const SOURCES = [
   ["anthropic_claude", "What people really use Claude for"],
   ["microsoft_copilot", "What people really use Microsoft Copilot for"],
   ["felten_aioe", "University researchers' rating"],
+  ["ai_panel", "Our 5-AI panel (average)"],
 ];
+const PANEL_NAMES = { openai: "GPT", google: "Gemini", anthropic: "Claude", meta: "Llama", deepseek: "DeepSeek", xai: "Grok" };
 const ALIASES = {
   "accountant": "13-2011", "auditor": "13-2011", "cpa": "13-2011", "bookkeeper": "43-3031", "cashier": "41-2011",
   "nurse": "29-1141", "rn": "29-1141", "teacher": "25-2021", "elementary teacher": "25-2021", "high school teacher": "25-2031",
@@ -306,7 +308,7 @@ function homePage() {
   <div class="facts">
     <div class="fact"><div class="big">${Math.round(m.workers_high / 1e6)} million</div><p>Americans work in jobs where AI can do or help with much of the work.</p></div>
     <div class="fact"><div class="big">${m.jobs}</div><p>jobs checked, covering nearly every kind of work in the US.</p></div>
-    <div class="fact"><div class="big">5 sources</div><p>ChatGPT, Claude, Microsoft Copilot, human experts and university researchers.</p></div>
+    <div class="fact"><div class="big">10 viewpoints</div><p>Real ChatGPT, Claude and Copilot usage, human experts, researchers, and our own panel of 5 AI models.</p></div>
   </div>`;
 }
 
@@ -338,6 +340,26 @@ function verdictText(j) {
   if (t.can) return `AI can already do ${t.can} of your ${total} main tasks, and can help with ${t.helps} more.`;
   if (t.helps) return `AI can't fully do your tasks yet, but it can help with ${t.helps} of your ${total}.`;
   return `AI can't do much of your work yet. All ${total} of your main tasks still need a person.`;
+}
+
+function saferSection(j) {
+  const picks = (j.safer || []).map(([soc, , rel, shared]) => ({ o: D.bySoc[soc], rel, shared })).filter((p) => p.o);
+  if (!picks.length) {
+    return `<section class="block"><h2>Safer jobs near yours</h2>
+      <p class="muted">We didn't find a nearby job that uses similar skills, pays about the same, and is clearly less exposed to AI. You can browse <a href="#/jobs">all jobs</a> sorted by AI exposure.</p></section>`;
+  }
+  return `<section class="block"><h2>Safer jobs near yours</h2>
+    <p class="muted">Jobs that use similar skills, need a similar level of training, pay about the same or more, and are less exposed to AI.</p>
+    <div class="safer">${picks.map(({ o, rel, shared }) => `
+      <a class="safe-card" href="#/job/${o.soc}">
+        <span class="safe-title">${esc(o.title)}</span>
+        <span class="safe-nums"><b>${Math.round(o.score)}</b> AI exposure <span class="muted">vs ${Math.round(j.score)} for you</span></span>
+        ${o.median_pay ? `<span class="safe-nums">Typical pay ${fmtMoney(o.median_pay)}${j.median_pay ? ` <span class="${o.median_pay >= j.median_pay ? "up" : "muted"}">(${o.median_pay >= j.median_pay ? "+" : ""}${fmtMoney(o.median_pay - j.median_pay).replace("$-", "-$")})</span>` : ""}</span>` : ""}
+        ${shared && shared.length ? `<span class="small">Skills you already use: ${esc(shared.join(", "))}</span>` : ""}
+        ${rel ? `<span class="tag">Officially related job</span>` : ""}
+      </a>`).join("")}</div>
+    <p class="small" style="margin-top:12px">"Officially related" means the US Labor Department lists it as a related job. Switching may still need some training.</p>
+  </section>`;
 }
 
 function advice(j) {
@@ -404,6 +426,8 @@ async function jobPage(soc, at) {
 
   ${advice(j)}
 
+  ${saferSection(j)}
+
   ${at ? `<section class="block" id="employer"><h2>Your employer: ${esc(at)}</h2><p class="muted">Looking it up…</p></section>` : `
   <section class="block"><h2>Add where you work</h2>
     <p class="muted">See your company's stock, filings and latest AI news. We don't save it.</p>
@@ -425,12 +449,19 @@ async function jobPage(soc, at) {
 
   <section class="block">
     <h2>Do the AIs agree?</h2>
-    <p class="muted">We asked five sources. Further right means more exposed than other jobs. ${j.spread >= 20 ? "They disagree a lot on this job, so treat the score with care." : "They mostly agree on this job."}</p>
+    <p class="muted">We compared six sources. Further right means more exposed than other jobs. ${j.spread >= 20 ? "They disagree a lot on this job, so treat the score with care." : "They mostly agree on this job."}</p>
     <div class="agree">${SOURCES.map(([k, name]) => j.src[k] == null ? "" :
       `<div class="agree-row"><span>${name}</span><div class="track"><span style="left:${j.src[k]}%"></span></div><b>${j.src[k]}</b></div>`).join("")}</div>
+    ${j.panel && Object.keys(j.panel).length ? `
+    <h3 style="margin-top:24px">How each AI rated this job</h3>
+    <p class="small">We asked ${Object.keys(j.panel).length} AI models to rate every task of every job, using the same rules for all of them.</p>
+    <div class="agree">${Object.entries(j.panel).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
+      `<div class="agree-row"><span>${esc(PANEL_NAMES[k] || k)}${D.meta.panel_models && D.meta.panel_models[k] ? ` <span class="small">${esc(D.meta.panel_models[k].split("/")[1])}</span>` : ""}</span><div class="track"><span style="left:${v}%;background:var(--helps)"></span></div><b>${v}</b></div>`).join("")}</div>` : ""}
   </section>
 
-  <div class="share"><button class="btn quiet" id="copy">Copy link to this page</button></div>`;
+  <div class="share"><button class="btn quiet" id="copy">Copy link to this page</button>
+    <a class="btn quiet" href="data/HedgeMyJob_model.xlsx" download>Download the Excel model</a></div>
+  <p class="small">The Excel model has every job, with live formulas. Pick your job, type your pay, and it does the rest.</p>`;
 }
 
 function hedgeSection(j) {
@@ -601,15 +632,95 @@ function signalsPage() {
     </section>`;
 }
 
+const SOURCE_NAMES = {
+  anthropic_claude: "Real Claude usage", microsoft_copilot: "Real Copilot usage", openai_gpt4: "ChatGPT's own rating",
+  openai_human: "Human experts", felten_aioe: "University researchers", ai_panel: "Our 5-AI panel (average)",
+  panel_openai: "GPT (our panel)", panel_google: "Gemini (our panel)", panel_anthropic: "Claude (our panel)",
+  panel_meta: "Llama (our panel)", panel_deepseek: "DeepSeek (our panel)", panel_xai: "Grok (our panel)",
+};
+
+async function researchPage() {
+  let R;
+  try { R = await getJSON("research.json"); } catch {
+    return `<div class="page-head"><h1>Research findings</h1></div><p class="muted">The research results haven't been generated yet.</p>`;
+  }
+  const q1 = R.exposure_vs_hiring, q3 = R.ai_agreement || {}, q4 = R.pay_vs_exposure;
+  const dir = q1.slope_per_10_points < 0 ? "fell" : "rose";
+  const sig = q1.p_value < 0.05;
+  const avg = q3.average_exposure_by_model || {};
+  const avgRows = Object.entries(avg).sort((a, b) => b[1] - a[1]);
+  const srcs = (R.sources_vs_hiring || []).slice().sort((a, b) => a.correlation - b.correlation);
+  return `<div class="page-head"><h1>Research findings</h1>
+    <p class="muted">What the data says when you put all of it together. Statistics run in R on ${q1.sectors} job sectors and ${R.sectors ? R.sectors.length : ""} hiring series from Indeed.</p></div>
+
+  <section class="block"><h2>1. Did AI-exposed fields lose more hiring?</h2>
+    <p class="verdict" style="font-size:1.4rem;margin:10px 0">${sig
+      ? `Yes. For every 10 points more AI exposure, job postings ${dir} about ${Math.abs(q1.slope_per_10_points)} percentage points more since ChatGPT came out.`
+      : `Not clearly. More exposed fields didn't lose clearly more hiring than less exposed ones.`}</p>
+    <p class="muted">Correlation ${q1.correlation}, R² ${q1.r_squared}, p-value ${q1.p_value}${sig ? " (statistically significant)" : " (not statistically significant)"}. Hiring also fell for reasons that have nothing to do with AI, like interest rates, so this shows a link, not proof of cause.</p>
+    <img src="data/sector_exposure_vs_hiring.png" alt="Scatter chart of AI exposure against change in job postings by sector" style="width:100%;border-radius:10px;margin-top:10px" onerror="this.remove()">
+  </section>
+
+  <section class="block"><h2>2. Which way of measuring AI exposure tracks hiring best?</h2>
+    <p class="muted">A more negative number means fields that source calls exposed lost more hiring.</p>
+    <div class="sigtable" role="table">
+      <div role="row" class="sh" style="grid-template-columns:2fr 1fr 1fr"><span role="columnheader">Source</span><span role="columnheader">Link to hiring change</span><span role="columnheader">p-value</span></div>
+      ${srcs.map((x) => `<div role="row" style="grid-template-columns:2fr 1fr 1fr"><span role="cell">${esc(SOURCE_NAMES[x.source] || x.source)}</span><span role="cell"><b>${x.correlation}</b></span><span role="cell">${x.p_value}</span></div>`).join("")}
+    </div>
+  </section>
+
+  ${avgRows.length ? `<section class="block"><h2>3. Do the AI models agree?</h2>
+    <p class="verdict" style="font-size:1.4rem;margin:10px 0">They agree on which jobs are most exposed (rank agreement ${q3.average_rank_agreement} out of 1), but not on how much.</p>
+    <p class="muted">Average share of a job's work each AI says it can do or speed up:</p>
+    <div class="agree">${avgRows.map(([k, v]) => `<div class="agree-row"><span>${esc(PANEL_NAMES[k] || k)}</span><div class="track"><span style="left:${v}%;background:var(--helps)"></span></div><b>${v}</b></div>`).join("")}</div>
+  </section>` : ""}
+
+  <section class="block"><h2>4. Are better-paid jobs more exposed?</h2>
+    <p class="verdict" style="font-size:1.4rem;margin:10px 0">${q4.pay_change_per_10_points_pct > 0
+      ? `Yes. Every 10 points of AI exposure goes with about ${q4.pay_change_per_10_points_pct}% higher typical pay.`
+      : `No. More exposed jobs tend to pay ${Math.abs(q4.pay_change_per_10_points_pct)}% less per 10 points of exposure.`}</p>
+    <div class="agree">${Object.entries(q4.exposure_by_pay_fifth).map(([k, v]) => `<div class="agree-row"><span>${esc(k)}</span><div class="track"><span style="left:${v}%"></span></div><b>${v}</b></div>`).join("")}</div>
+    <p class="small">AI exposure score, weighted by how many people do each job.</p>
+  </section>
+  ${await quantSection()}`;
+}
+
+async function quantSection() {
+  let Q;
+  try { Q = await getJSON("quant.json"); } catch { return ""; }
+  const cols = "1.8fr 1fr 1fr 0.8fr 1fr 0.8fr";
+  const row = (b, head) => `<div role="row" class="${head ? "sh" : ""}" style="grid-template-columns:${cols}">
+    ${head ? b.map((h) => `<span role="columnheader">${h}</span>`).join("") :
+      `<span role="cell"><b>${esc(b.name)}</b></span><span role="cell">${b.yearly_return}%</span><span role="cell">${b.yearly_volatility}%</span>
+       <span role="cell">${b.sharpe}</span><span role="cell">-${b.max_drawdown}%</span><span role="cell">${b.beta_vs_market}</span>`}</div>`;
+  return `<section class="block"><h2>5. How risky were the AI stocks?</h2>
+    <p class="muted">Fund-style statistics since ChatGPT came out, calculated in R with PerformanceAnalytics. Each basket holds its stocks in equal amounts, rebalanced monthly.</p>
+    <div class="sigtable" role="table">
+      ${row(["Basket", "Yearly return", "Yearly ups and downs", "Sharpe ratio", "Worst drop", "Beta"], true)}
+      ${Q.baskets.map((b) => row(b)).join("")}
+    </div>
+    <details><summary>What these numbers mean</summary>
+      <ul class="small" style="margin-top:8px">
+        <li><b>Yearly ups and downs</b> (volatility): how much the price swings. Higher means a bumpier ride.</li>
+        <li><b>Sharpe ratio</b>: return earned per unit of risk, after the ${Q.risk_free_yearly_pct}% you'd get from safe Treasury bills. Above 1 is strong.</li>
+        <li><b>Worst drop</b> (max drawdown): the biggest fall from a peak before recovering.</li>
+        <li><b>Beta</b>: how much it moves with the market. 1.5 means about 1.5 times the market's moves.</li>
+      </ul></details>
+    <img src="data/quant_performance.png" alt="Growth of $1, daily returns and drawdowns for each AI basket and the S&P 500" style="width:100%;border-radius:10px;margin-top:14px" onerror="this.remove()">
+    <p class="small" style="margin-top:10px">Past results, not predictions. Not a recommendation to buy or sell.</p>
+  </section>`;
+}
+
 function aboutPage() {
   return `<div class="page-head"><h1>How it works</h1></div>
   <section class="block"><h2>The score</h2>
-    <p>Every job is a list of tasks, from the US Labor Department's job database (O*NET). For each job we check five sources:</p>
+    <p>Every job is a list of tasks, from the US Labor Department's job database (O*NET). For each job we check six sources:</p>
     <ul>
       <li><b>ChatGPT's own rating</b> and <b>human experts' rating</b> of which tasks AI can speed up, from OpenAI's "GPTs are GPTs" study.</li>
       <li><b>What people really use Claude for</b>, from Anthropic's Economic Index.</li>
       <li><b>What people really use Microsoft Copilot for</b>, from Microsoft's "Working with AI" study.</li>
       <li><b>University researchers' rating</b>, from Felten, Raj and Seamans, who matched AI progress to job skills.</li>
+      <li><b>Our own 5-AI panel.</b> We asked GPT, Gemini, Claude, Llama and DeepSeek to rate all 18,000+ job tasks with the same rules OpenAI's researchers used. Each AI's rating is shown on every job page, so you can see where they disagree.</li>
     </ul>
     <p>Each source ranks all jobs. We average those rankings into one score from 0 to 100. A score of 84 means the job is more exposed than 84 out of 100 jobs.</p>
   </section>
@@ -660,6 +771,7 @@ async function route() {
     else if (page === "company") { main.innerHTML = companyPage(decodeURIComponent(parts[1] || "")); wireToggles(main); }
     else if (page === "about") { main.innerHTML = aboutPage(); }
     else if (page === "signals") { main.innerHTML = signalsPage(); wireToggles(main); }
+    else if (page === "research") { main.innerHTML = await researchPage(); }
     else { main.innerHTML = homePage(); wireHome(); }
   } catch (err) {
     main.innerHTML = `<h1 style="margin-top:40px">Something went wrong loading this page.</h1><p class="muted">${esc(err.message)}. Refresh the page to try again.</p>`;

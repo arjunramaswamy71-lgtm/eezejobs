@@ -1,0 +1,9 @@
+{
+  "engine": "Java",
+  "groups": [
+    {"label": "Strong uptrend", "times": 583, "beat_market_pct": 47.51, "avg_3m_return_pct": 4.78, "avg_vs_market_pct": 0.63},
+    {"label": "Uptrend", "times": 404, "beat_market_pct": 45.79, "avg_3m_return_pct": 4.16, "avg_vs_market_pct": 0.43},
+    {"label": "Mixed", "times": 228, "beat_market_pct": 50.44, "avg_3m_return_pct": 4.71, "avg_vs_market_pct": 0.72},
+    {"label": "Downtrend", "times": 671, "beat_market_pct": 45.16, "avg_3m_return_pct": 3.32, "avg_vs_market_pct": 0.08}
+  ]
+}

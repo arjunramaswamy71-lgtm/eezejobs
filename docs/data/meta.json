@@ -1,1 +1,1 @@
-{"updated":"October 16, 2026","jobs":809,"workers_high":40956260,"workers_total":144244330}
+{"panel_models":{"anthropic":"anthropic/claude-haiku-5.5","deepseek":"deepseek/deepseek-v4.1-flash-1017","google":"google/gemini-3.8-flash","meta":"meta-llama/llama-3.3-70b-instruct","openai":"openai/gpt-5.4-mini"},"updated":"October 16, 2026","jobs":809,"workers_high":40971430,"workers_total":144244330}

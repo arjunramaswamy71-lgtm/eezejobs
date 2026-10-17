@@ -9,6 +9,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 import companies  # noqa: E402
 import signals  # noqa: E402
+import neighbors  # noqa: E402
 
 ROOT = Path(__file__).parent
 PROC = ROOT / "data" / "processed"
@@ -93,6 +94,13 @@ for row in comp_rows:
     if row.get("ticker") in sig_now:
         row["signal"] = sig_now[row["ticker"]]
 
+# Nearby jobs that are less exposed to AI
+if (neighbors.ONET / "Related Occupations.txt").exists():
+    safer = neighbors.safer_jobs_onet(jobs)
+else:
+    print("O*NET files missing, using task wording for nearby jobs")
+    safer = {k: [[o, sc, 0, []] for o, sc in v] for k, v in neighbors.safer_jobs(jobs, tasks).items()}
+
 # Jobs, with matched companies and a simple backtest
 job_rows, task_map = [], {}
 for _, j in jobs.iterrows():
@@ -113,12 +121,16 @@ for _, j in jobs.iterrows():
         "soc": soc, "title": j["title"], "score": r(j["exposure_score"]),
         "sources": int(j["sources_used"]), "spread": r(j["disagreement"]),
         "src": {k: r(j[f"{k}_pct"], 0) for k in
-                ["anthropic_claude", "microsoft_copilot", "openai_gpt4", "openai_human", "felten_aioe"]},
+                ["anthropic_claude", "microsoft_copilot", "openai_gpt4", "openai_human", "felten_aioe", "ai_panel"]
+                if f"{k}_pct" in j},
+        "panel": {c[len("panel_"):-len("_pct")]: r(j[c], 0) for c in j.index
+                  if c.startswith("panel_") and c.endswith("_pct") and pd.notna(j[c])},
         "workers": None if pd.isna(j["employment"]) else int(j["employment"]),
         "median_pay": None if pd.isna(j["median_wage"]) else int(j["median_wage"]),
         "tasks": {"can": counts.get("can", 0), "helps": counts.get("helps", 0), "you": counts.get("you", 0)},
         "companies": [m[2] for m in matches],
         "basket": basket,
+        "safer": safer.get(soc, []),
         "sector": sector if sector in hiring else None,
     })
     task_map[soc] = [[t["task"], t["bucket"], 1 if t["task_type"] == "Core" else 0] for _, t in jt.iterrows()]
@@ -147,9 +159,38 @@ dump("tasks.json", task_map)
 dump("companies.json", comp_rows)
 dump("employers.json", sec)
 dump("signals.json", signals.backtest(prices))
+import panel_scores  # noqa: E402
+
 dump("meta.json", {
+    "panel_models": panel_scores.models_used(),
     "updated": prices.index[-1].strftime("%B %-d, %Y") if sys.platform != "win32" else prices.index[-1].strftime("%B %#d, %Y"),
     "jobs": len(job_rows),
     "workers_high": int(jobs.loc[jobs["exposure_score"] >= 75, "employment"].sum()),
     "workers_total": int(jobs["employment"].sum()),
 })
+
+
+# Tidy table for the R statistics (analysis/stats.R)
+h_start = hiring[hiring.index >= START].iloc[0]
+h_end = hiring.iloc[-1]
+sector_change = (h_end / h_start - 1).rename("hiring_change")
+rjobs = jobs.copy()
+rjobs["group"] = rjobs["soc"].str[:2]
+rjobs["sector"] = rjobs["soc"].map(hiring_sector)
+rjobs = rjobs.merge(sector_change, left_on="sector", right_index=True, how="left")
+keep = ["soc", "title", "group", "sector", "hiring_change", "employment", "median_wage", "mean_wage",
+        "exposure_score", "disagreement", "sources_used"]
+keep += [c for c in rjobs.columns if c.endswith("_pct")] + [c for c in rjobs.columns if c.startswith("panel_") and not c.endswith("_pct")]
+keep = list(dict.fromkeys(c for c in keep if c in rjobs.columns))
+rjobs[keep].to_csv(PROC / "jobs_for_r.csv", index=False)
+print(f"jobs_for_r.csv: {len(rjobs)} jobs, {rjobs['sector'].notna().sum()} matched to a hiring sector")
+
+# Stock baskets for the R quant analysis (analysis/quant.R)
+import config  # noqa: E402
+
+rows = []
+for field_id, field in config.FIELDS.items():
+    rows += [{"basket": field["label"], "ticker": t} for t in field["hedge_basket"]]
+rows += [{"basket": "All public AI sellers", "ticker": c["ticker"]} for c in comp_rows if c["public"] and c["ticker"] in prices]
+rows += [{"basket": "Big AI platforms", "ticker": t} for t in ["MSFT", "GOOGL", "AMZN", "META", "IBM", "NVDA"]]
+pd.DataFrame(rows).to_csv(PROC / "baskets_for_r.csv", index=False)

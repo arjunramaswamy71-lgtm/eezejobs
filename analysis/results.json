@@ -1,0 +1,343 @@
+{
+  "exposure_vs_hiring": {
+    "sectors": 33,
+    "slope_per_10_points": -1.199,
+    "p_value": 0.139,
+    "r_squared": 0.069,
+    "correlation": -0.252
+  },
+  "sources_vs_hiring": [
+    {
+      "source": "microsoft_copilot",
+      "sectors": 33,
+      "correlation": -0.412,
+      "p_value": 0.0171
+    },
+    {
+      "source": "openai_human",
+      "sectors": 33,
+      "correlation": -0.268,
+      "p_value": 0.132
+    },
+    {
+      "source": "anthropic_claude",
+      "sectors": 33,
+      "correlation": -0.266,
+      "p_value": 0.135
+    },
+    {
+      "source": "openai_gpt4",
+      "sectors": 33,
+      "correlation": -0.192,
+      "p_value": 0.285
+    },
+    {
+      "source": "panel_google",
+      "sectors": 33,
+      "correlation": -0.173,
+      "p_value": 0.336
+    },
+    {
+      "source": "panel_deepseek",
+      "sectors": 33,
+      "correlation": -0.169,
+      "p_value": 0.348
+    },
+    {
+      "source": "felten_aioe",
+      "sectors": 33,
+      "correlation": -0.168,
+      "p_value": 0.349
+    },
+    {
+      "source": "ai_panel",
+      "sectors": 33,
+      "correlation": -0.149,
+      "p_value": 0.407
+    },
+    {
+      "source": "panel_meta",
+      "sectors": 33,
+      "correlation": -0.134,
+      "p_value": 0.459
+    },
+    {
+      "source": "panel_anthropic",
+      "sectors": 33,
+      "correlation": -0.106,
+      "p_value": 0.558
+    },
+    {
+      "source": "panel_openai",
+      "sectors": 33,
+      "correlation": -0.062,
+      "p_value": 0.734
+    }
+  ],
+  "ai_agreement": {
+    "models": [
+      "anthropic",
+      "deepseek",
+      "google",
+      "meta",
+      "openai"
+    ],
+    "average_rank_agreement": 0.811,
+    "lowest_pair_agreement": 0.774,
+    "average_exposure_by_model": {
+      "anthropic": 36.1,
+      "deepseek": 48.1,
+      "google": 22,
+      "meta": 35.5,
+      "openai": 52.1
+    },
+    "rank_correlations": {
+      "panel_anthropic": {
+        "panel_anthropic": 1,
+        "panel_deepseek": 0.832,
+        "panel_google": 0.88,
+        "panel_meta": 0.812,
+        "panel_openai": 0.805
+      },
+      "panel_deepseek": {
+        "panel_anthropic": 0.832,
+        "panel_deepseek": 1,
+        "panel_google": 0.806,
+        "panel_meta": 0.781,
+        "panel_openai": 0.837
+      },
+      "panel_google": {
+        "panel_anthropic": 0.88,
+        "panel_deepseek": 0.806,
+        "panel_google": 1,
+        "panel_meta": 0.796,
+        "panel_openai": 0.783
+      },
+      "panel_meta": {
+        "panel_anthropic": 0.812,
+        "panel_deepseek": 0.781,
+        "panel_google": 0.796,
+        "panel_meta": 1,
+        "panel_openai": 0.774
+      },
+      "panel_openai": {
+        "panel_anthropic": 0.805,
+        "panel_deepseek": 0.837,
+        "panel_google": 0.783,
+        "panel_meta": 0.774,
+        "panel_openai": 1
+      }
+    }
+  },
+  "pay_vs_exposure": {
+    "pay_change_per_10_points_pct": 8.827,
+    "p_value": 0.0000000000000000000000000000000000000000014,
+    "exposure_by_pay_fifth": {
+      "Lowest paid fifth": 42.4,
+      "Second fifth": 49,
+      "Middle fifth": 48.2,
+      "Fourth fifth": 73.3,
+      "Highest paid fifth": 69.6
+    }
+  },
+  "sectors": [
+    {
+      "sector": "Data & Analytics",
+      "hiring_change": -0.5510774,
+      "exposure": 93.61552,
+      "workers": 432400
+    },
+    {
+      "sector": "Media & Communications",
+      "hiring_change": -0.4604663,
+      "exposure": 90.51444,
+      "workers": 613520
+    },
+    {
+      "sector": "Customer Service",
+      "hiring_change": -0.305103,
+      "exposure": 90.00314,
+      "workers": 2654180
+    },
+    {
+      "sector": "Banking & Finance",
+      "hiring_change": -0.2800837,
+      "exposure": 86.62161,
+      "workers": 1439330
+    },
+    {
+      "sector": "Human Resources",
+      "hiring_change": -0.3901939,
+      "exposure": 85.92395,
+      "workers": 1245470
+    },
+    {
+      "sector": "Software Development",
+      "hiring_change": -0.4679204,
+      "exposure": 85.73135,
+      "workers": 4827720
+    },
+    {
+      "sector": "Insurance",
+      "hiring_change": -0.1857025,
+      "exposure": 82.4,
+      "workers": 105420
+    },
+    {
+      "sector": "Accounting",
+      "hiring_change": -0.4599117,
+      "exposure": 82.32954,
+      "workers": 2823180
+    },
+    {
+      "sector": "Marketing",
+      "hiring_change": -0.3975302,
+      "exposure": 81.7908,
+      "workers": 2067030
+    },
+    {
+      "sector": "Sales",
+      "hiring_change": -0.2290074,
+      "exposure": 79.13393,
+      "workers": 5592990
+    },
+    {
+      "sector": "Administrative Assistance",
+      "hiring_change": -0.4224785,
+      "exposure": 77.96177,
+      "workers": 13264270
+    },
+    {
+      "sector": "Project Management",
+      "hiring_change": -0.2527393,
+      "exposure": 77.5,
+      "workers": 1066670
+    },
+    {
+      "sector": "Civil Engineering",
+      "hiring_change": -0.1858761,
+      "exposure": 75.45523,
+      "workers": 1800740
+    },
+    {
+      "sector": "Legal",
+      "hiring_change": -0.2250496,
+      "exposure": 71.89996,
+      "workers": 1415140
+    },
+    {
+      "sector": "Education & Instruction",
+      "hiring_change": -0.3443539,
+      "exposure": 69.89834,
+      "workers": 7134370
+    },
+    {
+      "sector": "Scientific Research & Development",
+      "hiring_change": -0.4496101,
+      "exposure": 69.56002,
+      "workers": 1465820
+    },
+    {
+      "sector": "Management",
+      "hiring_change": -0.2387908,
+      "exposure": 69.28411,
+      "workers": 13734870
+    },
+    {
+      "sector": "Arts & Entertainment",
+      "hiring_change": -0.307494,
+      "exposure": 64.75477,
+      "workers": 629550
+    },
+    {
+      "sector": "Community & Social Service",
+      "hiring_change": -0.3581551,
+      "exposure": 64.13561,
+      "workers": 1961740
+    },
+    {
+      "sector": "Retail",
+      "hiring_change": -0.3144421,
+      "exposure": 58.54859,
+      "workers": 7679680
+    },
+    {
+      "sector": "Nursing",
+      "hiring_change": -0.3396529,
+      "exposure": 56.3,
+      "workers": 3379720
+    },
+    {
+      "sector": "Physicians & Surgeons",
+      "hiring_change": 0.08017172,
+      "exposure": 54.66333,
+      "workers": 3150050
+    },
+    {
+      "sector": "Childcare",
+      "hiring_change": -0.4952827,
+      "exposure": 43.9,
+      "workers": 518910
+    },
+    {
+      "sector": "Medical Technician",
+      "hiring_change": -0.3165326,
+      "exposure": 42.45962,
+      "workers": 2826350
+    },
+    {
+      "sector": "Security & Public Safety",
+      "hiring_change": -0.2400497,
+      "exposure": 41.53489,
+      "workers": 3755910
+    },
+    {
+      "sector": "Driving",
+      "hiring_change": -0.3691622,
+      "exposure": 37.2279,
+      "workers": 4318900
+    },
+    {
+      "sector": "Food Preparation & Service",
+      "hiring_change": -0.2933055,
+      "exposure": 36.30086,
+      "workers": 13576780
+    },
+    {
+      "sector": "Personal Care & Home Health",
+      "hiring_change": -0.1587778,
+      "exposure": 30.70845,
+      "workers": 3595860
+    },
+    {
+      "sector": "Installation & Maintenance",
+      "hiring_change": -0.2502818,
+      "exposure": 29.40045,
+      "workers": 6076810
+    },
+    {
+      "sector": "Production & Manufacturing",
+      "hiring_change": -0.3140584,
+      "exposure": 27.69774,
+      "workers": 6813850
+    },
+    {
+      "sector": "Construction",
+      "hiring_change": -0.2452256,
+      "exposure": 23.399,
+      "workers": 6366510
+    },
+    {
+      "sector": "Loading & Stocking",
+      "hiring_change": -0.3197515,
+      "exposure": 21.64483,
+      "workers": 7823250
+    },
+    {
+      "sector": "Cleaning & Sanitation",
+      "hiring_change": -0.3620613,
+      "exposure": 14.86397,
+      "workers": 4517420
+    }
+  ]
+}

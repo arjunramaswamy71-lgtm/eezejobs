@@ -1,0 +1,296 @@
+{
+  "start": "2022-11-30",
+  "risk_free_yearly_pct": 4.5,
+  "baskets": [
+    {
+      "name": "Finance and accounting",
+      "yearly_return": 0.5,
+      "yearly_volatility": 29.6,
+      "sharpe": 0.02,
+      "max_drawdown": 52.7,
+      "beta_vs_market": 0.99
+    },
+    {
+      "name": "Legal",
+      "yearly_return": 3.3,
+      "yearly_volatility": 23.8,
+      "sharpe": 0.07,
+      "max_drawdown": 55.6,
+      "beta_vs_market": 0.44
+    },
+    {
+      "name": "Customer service",
+      "yearly_return": 24.5,
+      "yearly_volatility": 29.3,
+      "sharpe": 0.74,
+      "max_drawdown": 32.3,
+      "beta_vs_market": 1.17
+    },
+    {
+      "name": "All public AI sellers",
+      "yearly_return": 23,
+      "yearly_volatility": 25.1,
+      "sharpe": 0.77,
+      "max_drawdown": 37.5,
+      "beta_vs_market": 1.21
+    },
+    {
+      "name": "Big AI platforms",
+      "yearly_return": 44.4,
+      "yearly_volatility": 24,
+      "sharpe": 1.47,
+      "max_drawdown": 23,
+      "beta_vs_market": 1.33
+    },
+    {
+      "name": "S&P 500",
+      "yearly_return": 19.2,
+      "yearly_volatility": 15,
+      "sharpe": 0.96,
+      "max_drawdown": 18.8,
+      "beta_vs_market": 1
+    }
+  ],
+  "stocks": [
+    {
+      "name": "NVDA",
+      "yearly_return": 93.3,
+      "yearly_volatility": 48,
+      "sharpe": 1.52,
+      "max_drawdown": 36.9,
+      "beta_vs_market": 2.06
+    },
+    {
+      "name": "PLTR",
+      "yearly_return": 129.9,
+      "yearly_volatility": 65.9,
+      "sharpe": 1.52,
+      "max_drawdown": 48.2,
+      "beta_vs_market": 2.19
+    },
+    {
+      "name": "META",
+      "yearly_return": 59.6,
+      "yearly_volatility": 39.6,
+      "sharpe": 1.26,
+      "max_drawdown": 34.2,
+      "beta_vs_market": 1.51
+    },
+    {
+      "name": "GOOGL",
+      "yearly_return": 37.4,
+      "yearly_volatility": 30.5,
+      "sharpe": 1.05,
+      "max_drawdown": 29.8,
+      "beta_vs_market": 1.2
+    },
+    {
+      "name": "AMZN",
+      "yearly_return": 28,
+      "yearly_volatility": 32.5,
+      "sharpe": 0.78,
+      "max_drawdown": 30.9,
+      "beta_vs_market": 1.43
+    },
+    {
+      "name": "SYM",
+      "yearly_return": 38.5,
+      "yearly_volatility": 91.1,
+      "sharpe": 0.75,
+      "max_drawdown": 72.5,
+      "beta_vs_market": 2.32
+    },
+    {
+      "name": "MSFT",
+      "yearly_return": 21.8,
+      "yearly_volatility": 26.2,
+      "sharpe": 0.71,
+      "max_drawdown": 34.5,
+      "beta_vs_market": 1.03
+    },
+    {
+      "name": "SAP",
+      "yearly_return": 21.8,
+      "yearly_volatility": 29.2,
+      "sharpe": 0.67,
+      "max_drawdown": 52.3,
+      "beta_vs_market": 0.87
+    },
+    {
+      "name": "SNOW",
+      "yearly_return": 21.9,
+      "yearly_volatility": 57.1,
+      "sharpe": 0.55,
+      "max_drawdown": 56.3,
+      "beta_vs_market": 1.59
+    },
+    {
+      "name": "DUOL",
+      "yearly_return": 20.2,
+      "yearly_volatility": 60.1,
+      "sharpe": 0.53,
+      "max_drawdown": 83.3,
+      "beta_vs_market": 1.44
+    },
+    {
+      "name": "IBM",
+      "yearly_return": 16,
+      "yearly_volatility": 32,
+      "sharpe": 0.49,
+      "max_drawdown": 37.5,
+      "beta_vs_market": 0.71
+    },
+    {
+      "name": "TSLA",
+      "yearly_return": 16.8,
+      "yearly_volatility": 58.1,
+      "sharpe": 0.48,
+      "max_drawdown": 53.8,
+      "beta_vs_market": 2.22
+    },
+    {
+      "name": "NOW",
+      "yearly_return": 14.8,
+      "yearly_volatility": 42.5,
+      "sharpe": 0.43,
+      "max_drawdown": 64.5,
+      "beta_vs_market": 1.27
+    },
+    {
+      "name": "TEAM",
+      "yearly_return": 12.6,
+      "yearly_volatility": 59.5,
+      "sharpe": 0.41,
+      "max_drawdown": 82.3,
+      "beta_vs_market": 1.43
+    },
+    {
+      "name": "VEEV",
+      "yearly_return": 13.5,
+      "yearly_volatility": 37,
+      "sharpe": 0.41,
+      "max_drawdown": 50.5,
+      "beta_vs_market": 0.8
+    },
+    {
+      "name": "ORCL",
+      "yearly_return": 13.4,
+      "yearly_volatility": 46.9,
+      "sharpe": 0.4,
+      "max_drawdown": 64.6,
+      "beta_vs_market": 1.47
+    },
+    {
+      "name": "ISRG",
+      "yearly_return": 12.6,
+      "yearly_volatility": 31.9,
+      "sharpe": 0.39,
+      "max_drawdown": 45.6,
+      "beta_vs_market": 1.14
+    },
+    {
+      "name": "RELX",
+      "yearly_return": 11.2,
+      "yearly_volatility": 23.8,
+      "sharpe": 0.38,
+      "max_drawdown": 49.9,
+      "beta_vs_market": 0.48
+    },
+    {
+      "name": "CRM",
+      "yearly_return": 11.7,
+      "yearly_volatility": 37.4,
+      "sharpe": 0.36,
+      "max_drawdown": 58.7,
+      "beta_vs_market": 1.03
+    },
+    {
+      "name": "GTLB",
+      "yearly_return": 7.8,
+      "yearly_volatility": 62.4,
+      "sharpe": 0.36,
+      "max_drawdown": 75,
+      "beta_vs_market": 1.59
+    },
+    {
+      "name": "WDAY",
+      "yearly_return": 3.4,
+      "yearly_volatility": 39.5,
+      "sharpe": 0.17,
+      "max_drawdown": 63.4,
+      "beta_vs_market": 0.91
+    },
+    {
+      "name": "ADP",
+      "yearly_return": 4.9,
+      "yearly_volatility": 21.6,
+      "sharpe": 0.12,
+      "max_drawdown": 40.8,
+      "beta_vs_market": 0.51
+    },
+    {
+      "name": "WK",
+      "yearly_return": -1.7,
+      "yearly_volatility": 42.5,
+      "sharpe": 0.06,
+      "max_drawdown": 61.4,
+      "beta_vs_market": 0.94
+    },
+    {
+      "name": "HUBS",
+      "yearly_return": -6.8,
+      "yearly_volatility": 52,
+      "sharpe": 0.04,
+      "max_drawdown": 79.2,
+      "beta_vs_market": 1.26
+    },
+    {
+      "name": "TRI",
+      "yearly_return": 0,
+      "yearly_volatility": 31.1,
+      "sharpe": 0.02,
+      "max_drawdown": 62.9,
+      "beta_vs_market": 0.47
+    },
+    {
+      "name": "INTU",
+      "yearly_return": -4.9,
+      "yearly_volatility": 36.4,
+      "sharpe": -0.07,
+      "max_drawdown": 68.2,
+      "beta_vs_market": 1
+    },
+    {
+      "name": "WTKWY",
+      "yearly_return": -2.7,
+      "yearly_volatility": 27.7,
+      "sharpe": -0.12,
+      "max_drawdown": 65.1,
+      "beta_vs_market": 0.38
+    },
+    {
+      "name": "ADBE",
+      "yearly_return": -8.5,
+      "yearly_volatility": 35.6,
+      "sharpe": -0.19,
+      "max_drawdown": 69.5,
+      "beta_vs_market": 1
+    },
+    {
+      "name": "NICE",
+      "yearly_return": -13.3,
+      "yearly_volatility": 41.4,
+      "sharpe": -0.24,
+      "max_drawdown": 68.2,
+      "beta_vs_market": 0.9
+    },
+    {
+      "name": "BL",
+      "yearly_return": -19.2,
+      "yearly_volatility": 42.8,
+      "sharpe": -0.39,
+      "max_drawdown": 67.5,
+      "beta_vs_market": 1.14
+    }
+  ]
+}

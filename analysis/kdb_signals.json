@@ -1,0 +1,30 @@
+[
+  {
+    "label":"Strong uptrend",
+    "times":583,
+    "beat_market_pct":47.512864494,
+    "avg_3m_return_pct":4.7759502068,
+    "avg_vs_market_pct":0.626091506
+  },
+  {
+    "label":"Uptrend",
+    "times":404,
+    "beat_market_pct":45.7920792079,
+    "avg_3m_return_pct":4.1624530642,
+    "avg_vs_market_pct":0.4339207863
+  },
+  {
+    "label":"Mixed",
+    "times":228,
+    "beat_market_pct":50.4385964912,
+    "avg_3m_return_pct":4.7147069272,
+    "avg_vs_market_pct":0.7208514308
+  },
+  {
+    "label":"Downtrend",
+    "times":671,
+    "beat_market_pct":45.1564828614,
+    "avg_3m_return_pct":3.3196530616,
+    "avg_vs_market_pct":0.0761027862
+  }
+]
