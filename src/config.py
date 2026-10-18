@@ -97,3 +97,9 @@ SOC_CROSSWALK_URL = "https://www.bls.gov/soc/2018/soc_2010_to_2018_crosswalk.xls
 ONET_PAGE = "https://www.onetcenter.org/database.html"
 ONET_VERSIONS = ["31_0", "30_3", "30_2", "30_1", "30_0", "29_3", "29_2"]
 ONET_FILES = ["Related Occupations.txt", "Skills.txt", "Knowledge.txt", "Work Activities.txt", "Job Zones.txt", "Occupation Data.txt"]
+
+# College majors (CIP codes) and degrees awarded, from NCES
+CIP_SOC_URLS = ["https://nces.ed.gov/ipeds/cipcode/Files/CIP2020_SOC2018_Crosswalk.xlsx"]
+CIP_RESOURCES_PAGE = "https://nces.ed.gov/ipeds/cipcode/resources.aspx?y=56"
+IPEDS_YEARS = [2025, 2024, 2023, 2022]
+VT_UNITID = "233921"  # Virginia Tech in IPEDS

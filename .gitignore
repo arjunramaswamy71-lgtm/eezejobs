@@ -185,3 +185,18 @@ data/raw/
 # Database is rebuilt by build.py
 data/*.duckdb
 __pycache__/
+
+# Implied Automation build files
+quant/node_modules/
+quant/out/hs_build/
+quant/out/apl_input.json
+quant/out/apl_output.json
+quant/ocaml/reverse_dcf
+quant/ocaml/*.exe
+quant/haskell/contracts
+quant/haskell/*.exe
+*.cmi
+*.cmx
+*.o
+*.hi
+quant/stan/*.rds

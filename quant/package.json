@@ -1,0 +1,6 @@
+{
+  "name": "hedgemyjob-quant",
+  "private": true,
+  "description": "Runs the APL step of the Implied Automation pipeline",
+  "dependencies": { "apl": "0.1.15" }
+}

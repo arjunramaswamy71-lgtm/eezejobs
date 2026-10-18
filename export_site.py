@@ -194,3 +194,12 @@ for field_id, field in config.FIELDS.items():
 rows += [{"basket": "All public AI sellers", "ticker": c["ticker"]} for c in comp_rows if c["public"] and c["ticker"] in prices]
 rows += [{"basket": "Big AI platforms", "ticker": t} for t in ["MSFT", "GOOGL", "AMZN", "META", "IBM", "NVDA"]]
 pd.DataFrame(rows).to_csv(PROC / "baskets_for_r.csv", index=False)
+
+# College majors ranked by AI exposure (needs: python download_data.py majors)
+import majors  # noqa: E402
+
+if (RAW / "majors" / "cip_soc.csv").exists() and (RAW / "majors" / "ipeds_bachelors.csv").exists():
+    summary, _ = majors.build()
+    print(f"majors.json: {summary['us_majors']} US majors, {summary['vt_majors']} at Virginia Tech")
+else:
+    print("majors.json skipped, run: python download_data.py majors")

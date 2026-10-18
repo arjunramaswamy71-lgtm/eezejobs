@@ -289,32 +289,60 @@ function wireToggles(root) {
 }
 
 /* ---------- Pages ---------- */
+function mapLegend(extra = "") {
+  return `<div class="u-legend"><span>Safer<span class="ramp" aria-hidden="true"></span>More exposed to AI</span>
+    <span class="sz"><i style="width:5px;height:5px"></i><i style="width:10px;height:10px"></i> Bigger dot = more workers</span>${extra}</div>`;
+}
+
 function homePage() {
   const m = D.meta;
   return `
-  <div class="hero">
-    <h1>See how much of your job AI can already do.</h1>
-    <p class="lede">Type your job. In plain English, we'll show which parts AI handles, which parts still need you, and who's making money from it.</p>
-    <form class="ask" id="ask" novalidate>
-      <div class="field"><label for="q-job">What's your job?</label>
-        <div class="combo"><input id="q-job" type="text" autocomplete="off" placeholder="Nurse, truck driver, accountant…"></div>
-        <p class="err" id="job-err" hidden></p></div>
-      <div class="field"><label for="q-emp">Where do you work? <span class="hint">Optional</span></label>
-        <div class="combo"><input id="q-emp" type="text" autocomplete="off" placeholder="Company name"></div></div>
-      <div><button class="btn" type="submit">Check my job</button></div>
-    </form>
-    <div class="chips"><span class="muted">Or try:</span>${POPULAR.map(([n, s]) => `<a class="chip" href="#/job/${s}">${n}</a>`).join("")}</div>
-  </div>
+  <div class="band"><div class="band-in hero">
+    <div>
+      <p class="eyebrow">Free · ${m.jobs} US jobs · 10 viewpoints</p>
+      <h1>See how much of your job <em>AI can already do.</em></h1>
+      <p class="lede">Type your job. In plain English, we'll show which parts AI handles, which parts still need you, and who's making money from it.</p>
+      <form class="ask" id="ask" novalidate>
+        <div class="field"><label for="q-job">What's your job?</label>
+          <div class="combo"><input id="q-job" type="text" autocomplete="off" placeholder="Nurse, truck driver, accountant…"></div>
+          <p class="err" id="job-err" hidden></p></div>
+        <div class="field"><label for="q-emp">Where do you work? <span class="hint">Optional</span></label>
+          <div class="combo"><input id="q-emp" type="text" autocomplete="off" placeholder="Company name"></div></div>
+        <div><button class="btn" type="submit">Check my job</button></div>
+      </form>
+      <div class="chips"><span class="muted">Or try:</span>${POPULAR.map(([n, s]) => `<a class="chip" data-soc="${s}" href="#/job/${s}">${n}</a>`).join("")}</div>
+    </div>
+    <div class="hero-map">
+      <div id="umap"></div>
+      ${mapLegend(`<span>Every dot is a job. Point at one to see it.</span>`)}
+    </div>
+  </div></div>
   <div class="facts">
     <div class="fact"><div class="big">${Math.round(m.workers_high / 1e6)} million</div><p>Americans work in jobs where AI can do or help with much of the work.</p></div>
     <div class="fact"><div class="big">${m.jobs}</div><p>jobs checked, covering nearly every kind of work in the US.</p></div>
-    <div class="fact"><div class="big">10 viewpoints</div><p>Real ChatGPT, Claude and Copilot usage, human experts, researchers, and our own panel of 5 AI models.</p></div>
+    <div class="fact"><div class="big">10</div><p>viewpoints: real ChatGPT, Claude and Copilot usage, human experts, researchers, and our own panel of 5 AI models.</p></div>
+  </div>
+  <h2 class="section-title">Keep exploring</h2>
+  <div class="teasers">
+    <a class="teaser" href="#/majors"><h3>College majors</h3><p>Which majors lead to the most AI-exposed jobs, with every Virginia Tech major ranked.</p><span class="go">See the majors →</span></a>
+    <a class="teaser" href="#/companies"><h3>Who sells the AI</h3><p>The public companies getting paid when AI does the work, and how their stocks have moved.</p><span class="go">See the companies →</span></a>
+    <a class="teaser" href="#/research"><h3>What we found</h3><p>Better-paid jobs are more exposed, and five AIs disagree on how much. The full research.</p><span class="go">Read the findings →</span></a>
   </div>`;
 }
 
 function wireHome() {
   const job = $("#q-job"), emp = $("#q-emp");
   let picked = null;
+  U = Universe.mount($("#umap"), D.jobs, { onPick: (j) => (location.hash = `#/job/${j.soc}`) });
+  const light = () => {
+    const q = job.value.trim();
+    U.setMatch(q.length >= 2 ? new Set(searchJobs(q, 80).map((j) => j.soc)) : null);
+  };
+  job.addEventListener("input", light);
+  document.querySelectorAll(".chip[data-soc]").forEach((c) => {
+    c.addEventListener("mouseenter", () => U.setMatch(new Set([c.dataset.soc])));
+    c.addEventListener("mouseleave", light);
+  });
   combo(job, async (q) => searchJobs(q), (j) => `${esc(j.title)}`, (j) => { picked = j; job.value = j.title; $("#job-err").hidden = true; });
   job.addEventListener("input", () => (picked = null));
   emp.addEventListener("focus", () => needEmployers().catch(() => {}), { once: true });
@@ -365,11 +393,11 @@ function saferSection(j) {
 function advice(j) {
   const lv = level(j.score);
   const items = {
-    High: ["Learn the AI tools for the tasks in blue and orange. People who use them well tend to replace people who don't.",
-      "Spend more of your time on the green tasks. That's where you're hardest to replace.",
+    High: ["Learn the AI tools for the tasks marked red and orange. People who use them well tend to replace people who don't.",
+      "Spend more of your time on the tasks marked green. That's where you're hardest to replace.",
       "Keep your resume current and your skills easy to carry to a nearby job."],
-    Medium: ["Try the AI tools for the tasks in orange. They can save you hours each week.",
-      "The green tasks are your strength. Make them a bigger part of your role.",
+    Medium: ["Try the AI tools for the tasks marked orange. They can save you hours each week.",
+      "The tasks marked green are your strength. Make them a bigger part of your role.",
       "Watch how your company is using AI, so changes don't surprise you."],
     Low: ["Most of your work still needs a person. That's a good position to be in.",
       "AI may still change the paperwork side of your job, so it's worth learning the basics.",
@@ -383,6 +411,7 @@ async function jobPage(soc, at) {
   const j = D.bySoc[soc];
   if (!j) return `<p class="back"><a href="#/">Back</a></p><h1>We couldn't find that job.</h1><p class="muted">Try searching again from the start page.</p>`;
   const tasks = (await needTasks())[soc] || [];
+  await needImplied().catch(() => null);
   const lv = level(j.score);
   const t = j.tasks, total = t.can + t.helps + t.you || 1;
   const col = { can: "var(--can)", helps: "var(--helps)", you: "var(--you)" };
@@ -395,15 +424,23 @@ async function jobPage(soc, at) {
   const platforms = companies.filter((c) => c.groups.includes("ALL"));
   document.title = `${j.title}: AI exposure | HedgeMyJob`;
 
+  const hasSafer = (j.safer || []).some(([s]) => D.bySoc[s]);
   return `
-  <a class="back" href="#/">← Check another job</a>
-  <div class="report-head">
-    <h1>${esc(j.title)}</h1>
-    <p class="meta">${j.workers ? `${fmtInt(j.workers)} people in the US do this job` : "US job"}${j.median_pay ? `. Typical pay ${fmtMoney(j.median_pay)} a year.` : "."}</p>
-  </div>
-  <p class="verdict">${verdictText(j)}</p>
-  <span class="level ${lv}">${LEVEL_WORDS[lv]}</span>
-  <span class="muted" style="margin-left:8px">More exposed than ${Math.round(j.score)} out of 100 jobs.</span>
+  <div class="band"><div class="band-in report-band">
+    <div class="report-head">
+      <a class="back" href="#/">← Check another job</a>
+      <h1>${esc(j.title)}</h1>
+      <p class="meta">${j.workers ? `${fmtInt(j.workers)} people in the US do this job` : "US job"}${j.median_pay ? `. Typical pay ${fmtMoney(j.median_pay)} a year.` : "."}</p>
+      <div class="score-big"><div class="orb" id="orb" title="The orb glows hotter and churns faster the more of this job AI can touch"></div><span class="n">${Math.round(j.score)}</span><span class="of">out of 100<br>AI exposure score</span></div>
+      <span class="level ${lv}">${LEVEL_WORDS[lv]}</span>
+      <p class="verdict">${verdictText(j)}</p>
+      <p class="muted">More exposed than ${Math.round(j.score)} out of 100 jobs.</p>
+    </div>
+    <div>
+      <div id="umap"></div>
+      ${mapLegend(`<span><i class="pulse" aria-hidden="true"></i>Your job</span>${hasSafer ? `<span><i class="link" aria-hidden="true"></i>Safer jobs near yours</span>` : ""}`)}
+    </div>
+  </div></div>
 
   <div class="split" aria-hidden="true">
     <div class="k-can" style="flex:${t.can}"></div><div class="k-helps" style="flex:${t.helps}"></div><div class="k-you" style="flex:${t.you}"></div>
@@ -446,6 +483,8 @@ async function jobPage(soc, at) {
   </section>
 
   ${hedgeSection(j)}
+
+  ${impliedSection(soc)}
 
   <section class="block">
     <h2>Do the AIs agree?</h2>
@@ -551,8 +590,12 @@ async function loadNews(name) {
 
 function jobsPage() {
   const groups = Object.entries(GROUPS);
-  return `<div class="page-head"><h1>All ${D.jobs.length} jobs</h1>
-    <p class="muted">Ranked by how exposed each job is to AI. Tap any job for the full breakdown.</p></div>
+  return `<div class="band"><div class="band-in explore">
+      <div class="page-head"><h1>All ${D.jobs.length} jobs</h1>
+      <p class="muted">Every dot is a job. Further right means more exposed to AI, higher up means better paid. Search or pick an area below and the map lights up those jobs.</p></div>
+      <div id="umap" style="height:clamp(340px,52vh,520px)"></div>
+      ${mapLegend(`<span>Click a dot to open that job.</span>`)}
+    </div></div>
     <div class="tools">
       <input id="jf" type="search" placeholder="Search jobs" aria-label="Search jobs">
       <select id="jg" aria-label="Job area" class="chip"><option value="">All areas</option>${groups.map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select>
@@ -562,13 +605,14 @@ function jobsPage() {
 }
 
 function wireJobs() {
+  U = Universe.mount($("#umap"), D.jobs, { onPick: (j) => (location.hash = `#/job/${j.soc}`), introMs: 1400 });
   const paint = () => {
     const q = $("#jf").value.trim().toLowerCase(), g = $("#jg").value, s = $("#js").value;
     let rows = D.jobs.filter((j) => (!g || j.soc.startsWith(g)) && (!q || j.title.toLowerCase().includes(q)));
     const sorters = { high: (a, b) => b.score - a.score, low: (a, b) => a.score - b.score,
       az: (a, b) => a.title.localeCompare(b.title), workers: (a, b) => (b.workers || 0) - (a.workers || 0) };
     rows.sort(sorters[s]);
-    const colorFor = (sc) => ({ High: "var(--can)", Medium: "var(--helps)", Low: "var(--you)" }[level(sc)]);
+    if (U) U.setMatch(q || g ? new Set(rows.map((j) => j.soc)) : null);
     $("#jlist").innerHTML = rows.length ? rows.map((j) => `<a class="jobrow" href="#/job/${j.soc}">
       <span>${esc(j.title)}<br><span class="small">${j.workers ? fmtInt(j.workers) + " workers" : GROUPS[j.soc.slice(0, 2)] || ""}</span></span>
       <span class="bar" aria-hidden="true"><span style="width:${j.score}%;background:${colorFor(j.score)}"></span></span>
@@ -608,7 +652,7 @@ function companyPage(key) {
     <section class="block"><h2>Jobs ${esc(c.name)}'s AI does work for</h2>
       ${all ? `<p class="muted">${esc(c.name)} sells general AI used in almost every office job.</p>` :
         targets.map((j) => `<a class="jobrow" href="#/job/${j.soc}"><span>${esc(j.title)}<br><span class="small">${fmtInt(j.workers)} workers</span></span>
-          <span class="bar" aria-hidden="true"><span style="width:${j.score}%;background:var(--can)"></span></span><b>${Math.round(j.score)}</b></a>`).join("")}
+          <span class="bar" aria-hidden="true"><span style="width:${j.score}%;background:${colorFor(j.score)}"></span></span><b>${Math.round(j.score)}</b></a>`).join("")}
     </section>`;
 }
 
@@ -735,9 +779,200 @@ function aboutPage() {
   <section class="block"><h2>Your privacy</h2><p>Everything runs in your browser. We don't save your job or employer, and there are no accounts or ads.</p></section>`;
 }
 
+/* ---------- College majors ---------- */
+const colorFor = (sc) => ({ High: "var(--can)", Medium: "var(--helps)", Low: "var(--you)" }[level(sc)]);
+
+async function majorsPage() {
+  if (!D.majors) D.majors = await getJSON("majors.json");
+  const S = D.majors.summary;
+  return `<div class="page-head"><h1>College majors and AI</h1>
+    <p class="muted">Each major is linked to the jobs its graduates usually go into, using the government's official major-to-job list.
+    A major's score is the average AI exposure of those jobs, weighted by how many people work in each. Tap a major to see its jobs.</p></div>
+    <div class="facts" style="padding:12px 0 18px">
+      <div class="fact"><div class="big">${S.vt_avg}</div><p>average score for a Virginia Tech graduate, out of 100 (all US graduates: ${S.us_avg})</p></div>
+      <div class="fact"><div class="big">${S.vt_high_share}%</div><p>of VT's ${fmtInt(S.vt_grads)} bachelor's graduates in ${S.year} studied a major scoring 75 or more (high exposure)</p></div>
+      <div class="fact"><div class="big">${S.vt_majors}</div><p>VT majors ranked, out of ${fmtInt(S.us_majors)} majors offered across the US</p></div>
+    </div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Which colleges">
+        <button class="chip" data-where="vt" aria-pressed="true">Virginia Tech</button>
+        <button class="chip" data-where="us" aria-pressed="false">All US colleges</button>
+      </div>
+      <input id="mf" type="search" placeholder="Search majors, like finance or nursing" aria-label="Search majors">
+      <select id="ms" aria-label="Sort" class="chip"><option value="high">Most exposed first</option><option value="low">Least exposed first</option><option value="grads">Most graduates</option><option value="pay">Best paid jobs</option><option value="az">A to Z</option></select>
+    </div>
+    <div id="mlist"></div>
+    <p class="small" style="margin-top:18px">Graduates are bachelor's degrees (first major) from the US Department of Education, ${S.year}. Jobs come from the NCES CIP 2020 to SOC 2018 crosswalk.
+    College teaching jobs are left out because almost every major links to them. A high score means AI can do or help with much of the work in these jobs, not that the jobs will disappear.</p>`;
+}
+
+function majorJobs(m) {
+  const jobs = m.jobs.map((soc) => D.bySoc[soc]).filter(Boolean);
+  return `<div class="maj-more">
+    <p class="muted">${m.high_share}% of people in these jobs are in high-exposure work.${m.pay ? ` Typical pay across them: <b>${fmtMoney(m.pay)}</b> a year.` : ""}
+    ${m.n_jobs > jobs.length ? `Showing the ${jobs.length} biggest of ${m.n_jobs} jobs.` : ""}${m.n_jobs <= 2 ? " The official list links this major to only a few jobs, so treat this score as rough." : ""}
+    ${m.vt_name && m.vt_name !== m.name ? `<br><span class="small">Reported to the government as: ${esc(m.name)}</span>` : ""}</p>
+    ${jobs.map((j) => `<a class="jobrow" href="#/job/${j.soc}"><span>${esc(j.title)}<br><span class="small">${j.workers ? fmtInt(j.workers) + " workers" : ""}${j.median_pay ? " · " + fmtMoney(j.median_pay) : ""}</span></span>
+      <span class="bar" aria-hidden="true"><span style="width:${j.score}%;background:${colorFor(j.score)}"></span></span><b>${Math.round(j.score)}</b></a>`).join("")}
+  </div>`;
+}
+
+function wireMajors() {
+  let where = "vt";
+  const paint = () => {
+    const q = $("#mf").value.trim().toLowerCase(), s = $("#ms").value;
+    const key = where === "vt" ? "vt_grads" : "us_grads";
+    let rows = D.majors.majors.filter((m) => m[key] > 0 && (!q || (m.name + " " + (m.vt_name || "") + " " + m.family).toLowerCase().includes(q)));
+    const title = (m) => (where === "vt" && m.vt_name) || m.name;
+    const sorters = { high: (a, b) => b.score - a.score, low: (a, b) => a.score - b.score, grads: (a, b) => b[key] - a[key],
+      pay: (a, b) => (b.pay || 0) - (a.pay || 0), az: (a, b) => title(a).localeCompare(title(b)) };
+    rows.sort(sorters[s]);
+    $("#mlist").innerHTML = rows.length ? rows.map((m) => `<details class="maj"><summary class="jobrow">
+      <span>${esc(title(m))}<br><span class="small">${esc(m.family)} · ${fmtInt(m[key])} graduates${where === "vt" ? " at VT a year" : " a year"}</span></span>
+      <span class="bar" aria-hidden="true"><span style="width:${m.score}%;background:${colorFor(m.score)}"></span></span>
+      <b title="AI exposure score out of 100">${Math.round(m.score)}</b></summary>${majorJobs(m)}</details>`).join("")
+      : `<p class="muted">No majors match. Try a shorter word.</p>`;
+  };
+  document.querySelectorAll("[data-where]").forEach((b) => b.addEventListener("click", () => {
+    where = b.dataset.where;
+    document.querySelectorAll("[data-where]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    paint();
+  }));
+  ["mf", "ms"].forEach((id) => $("#" + id).addEventListener("input", paint));
+  paint();
+}
+
+/* ---------- Implied Automation: what the stock market is betting AI will do ---------- */
+async function needImplied() { if (!D.implied) D.implied = await getJSON("implied.json"); return D.implied; }
+const pct1 = (x) => (x == null ? "n/a" : (x * 100).toFixed(x * 100 < 0.1 ? 2 : x * 100 < 10 ? 1 : 0) + "%");
+const bn = (x) => (x >= 1000 ? `$${(x / 1000).toFixed(1)} trillion` : `$${Math.round(x)} billion`);
+
+const PIPELINE = [
+  ["q / kdb+", "Lines up 50,000 daily prices with 7,000 SEC filings by the date each was filed, so the model never sees the future. Rolling betas with vectorised moving sums."],
+  ["OCaml", "Reverse discounted cash flow. Brent's root-finding method solves the growth rate each AI stock is pricing in, for 1,734 company-months."],
+  ["APL", "Matrix maths that spreads each company's extra AI revenue over the 775 jobs its AI does work for, in three capture-rate scenarios."],
+  ["Stan", "A Bayesian hierarchical model of how employment really changed from 2022 to 2025, with partial pooling across job families and robust Student-t errors."],
+  ["R", "Frequentist checks: robust (HC3) regressions, Fama-MacBeth slopes with Newey-West errors, two-way clustered errors and a long-short test."],
+  ["Julia", "Bootstraps a hazard curve for every job, the way credit desks read default odds from bond prices, then simulates 15.5 million careers in about a second."],
+  ["Haskell", "A small contract language in the style of Peyton Jones's 'Composing contracts'. Prices career insurance for every job from its hazard curve."],
+  ["MATLAB / Octave", "Constrained quadratic programming: the mix of AI stocks that best offsets the swings in each job's market-implied career value."],
+];
+
+async function impliedPage() {
+  const I = await needImplied();
+  const T = I.totals, rs = I.realized_summary || {}, gt = I.gap_test || {};
+  const share5 = T.automated_5y_bn / T.pay_bn;
+  const perYear = 1 - Math.pow(1 - share5, 1 / 5);
+  const curveDates = I.curve.map((c) => c[0].slice(0, 7));
+  const topJobs = Object.entries(I.jobs).map(([soc, v]) => ({ soc, ...v, j: D.bySoc[soc] })).filter((x) => x.j)
+    .sort((a, b) => b.a5 - a.a5);
+  const comps = I.companies.filter((c) => c.before != null);
+  const maxChg = Math.max(...comps.map((c) => Math.abs(c.now - c.before)));
+  const asOf = new Date(I.as_of + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  return `
+  <div class="band"><div class="band-in implied-hero">
+    <p class="eyebrow">Part 2 · Implied Automation</p>
+    <h1>What Wall Street is betting AI will do to jobs.</h1>
+    <p class="lede">Traders read "implied volatility" out of option prices. We read <b>implied automation</b> out of AI stock prices: run each company's valuation backwards, find the revenue the market expects from AI, and match it to the paychecks it would replace.</p>
+    <div class="bignums">
+      <div><span class="n">${pct1(share5)}</span><span>of US pay the market expects AI to do within 5 years<br><b>${bn(T.automated_5y_bn)}</b> a year · range ${pct1(T.automated_5y_lo_bn / T.pay_bn)} to ${pct1(T.automated_5y_hi_bn / T.pay_bn)}</span></div>
+      <div><span class="n">${pct1(T.automated_10y_bn / T.pay_bn)}</span><span>within 10 years, if the market's longer view is right</span></div>
+    </div>
+    <p class="small">As of ${asOf}. Built from ${comps.length} US-listed AI sellers and ${Object.keys(I.jobs).length} jobs. Research estimate, not a forecast or advice.</p>
+  </div></div>
+
+  <section class="block">
+    <h2>How the market's bet grew since ChatGPT</h2>
+    <p class="muted">Share of US pay the stock market prices AI to do within 5 years, re-estimated every month from that month's prices and the filings public at the time.</p>
+    ${lineChart(curveDates, [{ name: "Market-implied automation, 5 years", color: "var(--hi)", values: I.curve.map((c) => c[1]) }],
+      (v) => (v * 100).toFixed(v < 0.1 ? 1 : 0) + "%", { base: 0, label: "Market-implied share of US pay automated within 5 years, by month" })}
+  </section>
+
+  <section class="block vs-block">
+    <h2>The market's bet versus what's really happening</h2>
+    <div class="vs">
+      <div><span class="tag-hi">The market expects</span><b>${pct1(perYear)}</b><span>of US pay automated every year</span></div>
+      <div class="vs-mid" aria-hidden="true">vs</div>
+      <div><span class="tag-lo">Jobs data shows so far</span><b>${T.realized_per_year == null ? "n/a" : pct1(T.realized_per_year)}</b><span>a year, from employment in ${rs.jobs || ""} jobs, May 2022 to May 2025</span></div>
+    </div>
+    ${rs.bayesian ? `<p>A Bayesian model (Stan) finds no clear link yet between how much people use AI for a job's tasks and that job losing workers: the estimated effect is ${rs.bayesian.delta_mean.toFixed(3)}, with a 90% interval of ${rs.bayesian.delta_ci90[0].toFixed(3)} to ${rs.bayesian.delta_ci90[1].toFixed(3)}, which includes zero. A standard regression with robust errors agrees (p = ${rs.frequentist.p_value.toFixed(2)}).</p>` : ""}
+    ${gt.fama_macbeth ? `<p class="muted">Does that gap predict the stocks? Not so far. Companies the market is most optimistic about, relative to the jobs data, haven't done worse afterwards (Fama-MacBeth t = ${gt.fama_macbeth.nw_t.toFixed(2)}, ${gt.verdict}). If anything they kept rising.</p>` : ""}
+    <details><summary>The statistics in full</summary>
+      <ul class="small">
+        ${rs.bayesian ? `<li>Stan: 4 chains, max R-hat ${rs.bayesian.max_rhat.toFixed(3)}, ${rs.bayesian.divergent} divergent transitions, posterior predictive 90% interval covers ${Math.round(rs.bayesian.ppc_90_coverage * 100)}% of jobs.</li>` : ""}
+        ${gt.pooled ? `<li>Pooled regression with errors clustered by company and month: t = ${gt.pooled.t.toFixed(2)} on ${gt.pooled.obs} company-months.</li>` : ""}
+        ${gt.ic ? `<li>Information coefficient ${gt.ic.mean_ic.toFixed(3)} (t = ${gt.ic.nw_t.toFixed(2)}). Long low-gap, short high-gap: ${(gt.long_short.yearly * 100).toFixed(1)}% a year (t = ${gt.long_short.nw_t.toFixed(2)}).</li>` : ""}
+      </ul></details>
+  </section>
+
+  <section class="block">
+    <h2>Who the market thinks wins and loses</h2>
+    <p class="muted">The 10-year revenue growth each stock is pricing in, the day before ChatGPT launched and now. The market moved its bet to the big platforms and away from software sold for specific jobs.</p>
+    <div class="wl">${comps.map((c) => {
+      const d = c.now - c.before, w = (Math.abs(d) / maxChg) * 50;
+      const name = D.byKey[c.sym]?.name || c.sym;
+      return `<a class="wl-row" href="#/company/${c.sym}"><span>${esc(name)} <span class="small">${esc(c.sym)}</span></span>
+        <span class="wl-track" aria-hidden="true"><span class="${d >= 0 ? "pos" : "neg"}" style="${d >= 0 ? "left:50%" : `left:${50 - w}%`};width:${w}%"></span></span>
+        <b class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)} pts</b><span class="small wl-from">${(c.before * 100).toFixed(0)}% → ${(c.now * 100).toFixed(0)}%</span></a>`;
+    }).join("")}</div>
+  </section>
+
+  <section class="block">
+    <h2>Jobs the market is betting on most</h2>
+    <p class="muted">Share of each job's pay the market prices AI to do within 5 years. The bar shows the range across our three capture-rate scenarios.</p>
+    ${topJobs.slice(0, 15).map((x) => `<a class="jobrow" href="#/job/${x.soc}"><span>${esc(x.j.title)}<br><span class="small">Insurance against it: ${x.cds_spread_pct != null ? x.cds_spread_pct.toFixed(1) + "% of pay a year" : "n/a"}</span></span>
+      <span class="bar range" aria-hidden="true"><span style="left:${x.a5_lo * 100}%;width:${(x.a5_hi - x.a5_lo) * 100}%"></span><i style="left:${x.a5 * 100}%"></i></span><b>${pct1(x.a5)}</b></a>`).join("")}
+    <p class="small" style="margin-top:12px">Open any job to see its full market-implied numbers: career value, chance of being automated, insurance price and best hedge.</p>
+  </section>
+
+  <section class="block">
+    <h2>How it's built: one pipeline, eight languages</h2>
+    <ol class="pipeline">${PIPELINE.map(([lang, what]) => `<li><b>${lang}</b><span>${what}</span></li>`).join("")}</ol>
+  </section>
+
+  <section class="block">
+    <h2>What could make this wrong</h2>
+    <ul>
+      <li>Running a stock price backwards needs assumptions: long-run margins, the discount rate and growth after year 10. Each one moves the answer, which is why we show ranges.</li>
+      <li>Not all extra AI revenue replaces paid work. We count only part of it for cloud, ads and chips (for example ${Math.round(I.labor_share.GOOGL * 100)}% for Alphabet, none for Nvidia), but the split is a judgment call.</li>
+      <li>The capture rate, how much AI sellers earn for each $1 of pay their AI replaces, is unknown. Our scenarios use ${I.capture.map((k) => Math.round(k * 100) + "¢").join(", ")}.</li>
+      <li>Some changes since November 2022 aren't about AI at all, like Meta recovering from a 2022 slump or interest rates moving.</li>
+    </ul>
+  </section>`;
+}
+
+function impliedSection(soc) {
+  const I = D.implied;
+  const x = I && I.jobs[soc];
+  if (!x) return "";
+  const j = D.bySoc[soc];
+  const tops = [[x.top1, x.w1], [x.top2, x.w2], [x.top3, x.w3]].filter(([t, w]) => t && w > 0);
+  return `<section class="block implied-job">
+    <h2>The stock market's bet on this job</h2>
+    <p class="muted">From what AI stocks are priced to earn, worked back to this job's pay. <a href="#/implied">How this works</a></p>
+    <div class="money">
+      <div><span class="muted">Pay the market expects AI to do within 5 years</span><b>${pct1(x.a5)}</b><span class="small">range ${pct1(x.a5_lo)} to ${pct1(x.a5_hi)}</span></div>
+      <div><span class="muted">Chance a job like this is automated within 10 years</span><b>${pct1(x.prob_automated_10y)}</b><span class="small">from 20,000 simulated careers</span></div>
+      <div><span class="muted">What AI risk takes off lifetime pay</span><b class="down">${pct1(x.ai_haircut)}</b><span class="small">${x.hc_no_ai ? `${fmtMoney(x.hc_mean)} vs ${fmtMoney(x.hc_no_ai)} with no AI` : ""}</span></div>
+      <div><span class="muted">Fair price to insure a year's pay for 5 years</span><b>${x.cds_premium_dollars != null ? fmtMoney(x.cds_premium_dollars) : "n/a"}</b><span class="small">${x.cds_spread_pct != null ? x.cds_spread_pct.toFixed(2) + "% of pay a year" : ""}</span></div>
+    </div>
+    ${tops.length ? `<p>The stocks whose moves best offset swings in the market's view of this career: ${tops.map(([t]) => `<b>${esc(D.byKey[t]?.name || t)}</b>`).join(", ")}.${x.variance_cut != null ? ` Together they cancel about ${Math.round(x.variance_cut * 100)}% of those swings, partly by design, because the career value is itself read from these stocks.` : ""}</p>` : ""}
+    ${x.realized_hi != null ? `<p class="small">Reality check: from 2022 to 2025, the jobs data shows no clear AI-linked job loss for ${esc(j ? j.title.toLowerCase() : "this job")} (at most about ${pct1(x.realized_hi)} a year).</p>` : ""}
+    <p class="small">Research estimate built from stock prices, not advice and not a prediction for you personally.</p>
+  </section>`;
+}
+
 /* ---------- Router ---------- */
+let U = null;
+let FX = [];
+
 async function route() {
   const main = $("#main");
+  if (U) { U.destroy(); U = null; }
+  FX.forEach((f) => f && f.destroy());
+  FX = [];
+  main.classList.remove("enter");
   const [path, qs] = location.hash.replace(/^#/, "").split("?");
   const parts = (path || "/").split("/").filter(Boolean);
   const params = new URLSearchParams(qs || "");
@@ -749,10 +984,15 @@ async function route() {
   document.title = "HedgeMyJob";
   try {
     if (page === "home") { main.innerHTML = homePage(); wireHome(); }
+    else if (page === "majors") { main.innerHTML = `<p class="loading">Loading majors…</p>`; main.innerHTML = await majorsPage(); wireMajors(); document.title = "College majors and AI · HedgeMyJob"; }
     else if (page === "job") {
       main.innerHTML = `<p class="loading">Loading your report…</p>`;
       main.innerHTML = await jobPage(decodeURIComponent(parts[1] || ""), params.get("at"));
       wireToggles(main);
+      const me = D.bySoc[parts[1]];
+      if (me && $("#orb") && typeof Shaders !== "undefined") FX.push(Shaders.orb($("#orb"), me.score));
+      if (me && $("#umap")) U = Universe.mount($("#umap"), D.jobs, { focus: me.soc, links: (me.safer || []).map((x) => x[0]), introMs: 1200,
+        onPick: (j) => (location.hash = `#/job/${j.soc}`), label: `Map of all jobs with ${me.title} highlighted` });
       if (params.get("at")) fillEmployer(params.get("at"), parts[1]);
       const add = $("#add-emp");
       if (add) {
@@ -766,6 +1006,7 @@ async function route() {
         try { await navigator.clipboard.writeText(location.href); copy.textContent = "Link copied"; } catch { copy.textContent = "Copy the address bar to share"; }
       });
     }
+    else if (page === "implied") { main.innerHTML = `<p class="loading">Loading the market's bet…</p>`; main.innerHTML = await impliedPage(); document.title = "Implied Automation · HedgeMyJob"; }
     else if (page === "jobs") { main.innerHTML = jobsPage(); wireJobs(); }
     else if (page === "companies") { main.innerHTML = companiesPage(); wireCompanies(main); }
     else if (page === "company") { main.innerHTML = companyPage(decodeURIComponent(parts[1] || "")); wireToggles(main); }
@@ -776,7 +1017,10 @@ async function route() {
   } catch (err) {
     main.innerHTML = `<h1 style="margin-top:40px">Something went wrong loading this page.</h1><p class="muted">${esc(err.message)}. Refresh the page to try again.</p>`;
   }
+  if (typeof Shaders !== "undefined") main.querySelectorAll(".band").forEach((b) => FX.push(Shaders.nebula(b)));
   window.scrollTo(0, 0);
+  void main.offsetWidth;
+  main.classList.add("enter");
   if (page !== "home") main.focus({ preventScroll: true });
 }
 
