@@ -1,0 +1,67 @@
+# Every Monday, refresh the market data behind eezejobs and publish it.
+name: Weekly data refresh
+
+on:
+  schedule:
+    - cron: "17 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Python packages
+        run: pip install -r requirements.txt pykx
+
+      - name: Download this week's market data
+        run: python download_data.py prices indeed "sec company" fundamentals
+
+      - name: Refresh Part 1 (prices, signals, charts)
+        run: python update_market.py
+
+      - name: Install the Part 2 toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ocaml ghc octave r-base-core r-cran-sandwich
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1.11"
+
+      - name: Refresh Part 2 (the market's bet on every job)
+        env:
+          KDB_LICENSE_B64: ${{ secrets.KDB_LICENSE_B64 }}
+        run: |
+          if [ -z "$KDB_LICENSE_B64" ]; then
+            echo "No KDB_LICENSE_B64 secret set, so Part 2 is skipped this week."
+            exit 0
+          fi
+          echo "KDB_LICENSE_B64=$KDB_LICENSE_B64" > .env
+          python quant/run_q.py
+          python quant/pipeline.py ocaml apl gap
+          julia -t auto quant/julia/careers.jl
+          python quant/pipeline.py haskell octave export
+          rm -f .env
+
+      - name: Publish the refreshed data
+        run: |
+          git config user.name "eezejobs-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data quant/out
+          if git diff --cached --quiet; then
+            echo "Nothing changed this week."
+          else
+            git commit -m "Weekly data refresh $(date -u +%Y-%m-%d)"
+            git push
+          fi
