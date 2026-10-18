@@ -1,4 +1,4 @@
-# HedgeMyJob statistics in R
+# eezejobs statistics in R
 # Questions:
 #   1. Did fields with more AI exposure lose more hiring since ChatGPT came out?
 #   2. Which source of AI exposure best predicts falling hiring?

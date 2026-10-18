@@ -1,4 +1,4 @@
-package hedgemyjob;
+package eezejobs;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package hedgemyjob;
+package eezejobs;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

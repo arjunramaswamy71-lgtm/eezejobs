@@ -1,4 +1,4 @@
-"""Settings for HedgeMyJob: fields, occupations, sectors and starter hedge baskets."""
+"""Settings for eezejobs: fields, occupations, sectors and starter hedge baskets."""
 
 START_DATE = "2020-02-01"
 

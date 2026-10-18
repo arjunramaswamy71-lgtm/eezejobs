@@ -1,4 +1,4 @@
-/ HedgeMyJob trend signals and backtest, written in q for kdb+.
+/ eezejobs trend signals and backtest, written in q for kdb+.
 / Same rules as src/signals.py and the Java engine:
 /   1. price above its 200 day average
 /   2. 50 day average above the 200 day average

@@ -1,4 +1,4 @@
-"""Builds the downloadable HedgeMyJob Excel model (docs/data/HedgeMyJob_model.xlsx).
+"""Builds the downloadable eezejobs Excel model (docs/data/eezejobs_model.xlsx).
 
 Pick a job from the dropdown and enter your pay; formulas look up the job's AI exposure,
 its tasks, safer nearby jobs, hiring in the field, and what $X in its AI companies did
@@ -80,7 +80,7 @@ def build():
         jw.cell(row=r, column=5).number_format = "$#,##0"
     n_jobs = len(jobs) + 1
     jw.freeze_panes = "C2"
-    jw.cell(row=n_jobs + 2, column=1, value="Source: HedgeMyJob build of O*NET 31.0, BLS OEWS May 2025, Anthropic Economic Index, "
+    jw.cell(row=n_jobs + 2, column=1, value="Source: eezejobs build of O*NET 31.0, BLS OEWS May 2025, Anthropic Economic Index, "
             "OpenAI GPTs are GPTs, Microsoft Working with AI, Felten-Raj-Seamans AIOE, and our 5-AI panel.").font = font(italic=True, color=GREY)
 
     # ---------- Stock growth ----------
@@ -124,7 +124,7 @@ def build():
     ws.column_dimensions["A"].width = 46
     ws.column_dimensions["B"].width = 34
     ws.column_dimensions["C"].width = 54
-    ws["A1"] = "HedgeMyJob: your job and AI"
+    ws["A1"] = "eezejobs: your job and AI"
     ws["A1"].font = font(bold=True, size=18)
     ws["A2"] = "Change the yellow cells. Everything else updates by itself. For learning only, not financial or career advice."
     ws["A2"].font = font(italic=True, color=GREY)
@@ -241,7 +241,7 @@ def build():
     # ---------- About ----------
     aw.column_dimensions["A"].width = 120
     lines = [
-        ("HedgeMyJob model: how it works", True),
+        ("eezejobs model: how it works", True),
         ("Blue text = inputs or source data. Black = formulas. Green = formulas pulling from another sheet. Yellow = cells you can change.", False),
         ("", False),
         ("AI exposure score: average percentile rank across 6 sources: real Claude usage (Anthropic Economic Index), real Copilot usage", False),
@@ -260,7 +260,7 @@ def build():
     for sheet in [jw, gw, hw]:
         sheet.sheet_view.showGridLines = True
     ws.sheet_view.showGridLines = False
-    out_path = SITE / "HedgeMyJob_model.xlsx"
+    out_path = SITE / "eezejobs_model.xlsx"
     wb.save(out_path)
     return out_path
 

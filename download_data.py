@@ -64,7 +64,7 @@ def get_oews():
 
     if not config.CONTACT_EMAIL:
         raise ValueError("set CONTACT_EMAIL in src/config.py first")
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     for url in config.OEWS_URLS:
         r = requests.get(url, headers=headers, timeout=120)
         if r.status_code != 200:
@@ -82,7 +82,7 @@ def get_sec_companies():
 
     if not config.CONTACT_EMAIL:
         raise ValueError("set CONTACT_EMAIL in src/config.py first")
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     r = requests.get(config.SEC_TICKERS_URL, headers=headers, timeout=60)
     r.raise_for_status()
     df = pd.DataFrame(r.json().values())
@@ -93,7 +93,7 @@ def get_sec_companies():
 def get_crosswalk():
     import requests
 
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     r = requests.get(config.SOC_CROSSWALK_URL, headers=headers, timeout=60)
     r.raise_for_status()
     (RAW / "soc_crosswalk.xlsx").write_bytes(r.content)
@@ -107,7 +107,7 @@ def get_onet():
 
     import requests
 
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     urls = []
     try:
         page = requests.get(config.ONET_PAGE, headers=headers, timeout=60).text
@@ -141,7 +141,7 @@ def get_majors():
 
     import requests
 
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     folder = RAW / "majors"
     folder.mkdir(exist_ok=True)
 
@@ -218,7 +218,7 @@ def get_fundamentals():
     import requests
     import companies
 
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     sec = pd.read_csv(RAW / "sec_companies.csv")
     cik = dict(zip(sec["ticker"], sec["cik_str"]))
     concepts = {
@@ -270,7 +270,7 @@ def get_oews_2022():
 
     import requests
 
-    headers = {"User-Agent": f"HedgeMyJob student research {config.CONTACT_EMAIL}"}
+    headers = {"User-Agent": f"eezejobs student research {config.CONTACT_EMAIL}"}
     r = requests.get("https://www.bls.gov/oes/special-requests/oesm22nat.zip", headers=headers, timeout=120)
     r.raise_for_status()
     with zipfile.ZipFile(io.BytesIO(r.content)) as z:

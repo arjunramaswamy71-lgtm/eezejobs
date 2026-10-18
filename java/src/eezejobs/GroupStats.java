@@ -1,4 +1,4 @@
-package hedgemyjob;
+package eezejobs;
 
 /** Running totals for one signal label in the backtest. */
 public class GroupStats {

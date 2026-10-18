@@ -1,4 +1,4 @@
-# HedgeMyJob quant analytics in R, using the same tools quant and risk teams use
+# eezejobs quant analytics in R, using the same tools quant and risk teams use
 #   xts                  time series of daily prices
 #   PerformanceAnalytics fund-style statistics: Sharpe ratio, drawdown, beta, volatility
 # Compares each AI stock basket with the S&P 500 since ChatGPT came out (Nov 30, 2022).

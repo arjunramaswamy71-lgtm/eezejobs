@@ -116,7 +116,7 @@ def rate_batch(key, model, tasks, spend, costs):
         # Hidden "thinking" is billed as output, so switch it off where the model allows
         "reasoning": {"enabled": False},
     }
-    headers = {"Authorization": f"Bearer {key}", "X-Title": "HedgeMyJob research"}
+    headers = {"Authorization": f"Bearer {key}", "X-Title": "eezejobs research"}
     for attempt in range(4):
         try:
             r = requests.post(f"{API}/chat/completions", json=body, headers=headers, timeout=180)

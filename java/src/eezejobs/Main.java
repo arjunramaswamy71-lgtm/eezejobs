@@ -1,4 +1,4 @@
-package hedgemyjob;
+package eezejobs;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  * Runs the trend signal backtest in Java and checks it gives the same answer as the Python version.
- * Run from the project folder:  java java/src/hedgemyjob/Main.java
+ * Run from the project folder:  java java/src/eezejobs/Main.java
  */
 public class Main {
     public static void main(String[] args) throws Exception {

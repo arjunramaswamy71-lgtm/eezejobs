@@ -13,7 +13,7 @@ import scoring
 
 ROOT = Path(__file__).parent.parent
 RAW = ROOT / "data" / "raw"
-DB_PATH = Path(os.environ.get("HEDGEMYJOB_DB", ROOT / "data" / "hedgemyjob.duckdb"))
+DB_PATH = Path(os.environ.get("EEZEJOBS_DB", ROOT / "data" / "eezejobs.duckdb"))
 
 
 def jobs_table():

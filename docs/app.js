@@ -290,56 +290,95 @@ function wireToggles(root) {
 
 /* ---------- Pages ---------- */
 function mapLegend(extra = "") {
-  return `<div class="u-legend"><span>Safer<span class="ramp" aria-hidden="true"></span>More exposed to AI</span>
-    <span class="sz"><i style="width:5px;height:5px"></i><i style="width:10px;height:10px"></i> Bigger dot = more workers</span>${extra}</div>`;
+  return `<div class="legend-map"><span>Safer<span class="grad" aria-hidden="true"></span>More exposed to AI</span>
+    <span><i class="contour" aria-hidden="true"></i>Higher ground means more people do that work</span>
+    <span><i class="water" aria-hidden="true"></i>Under water: work AI is expected to take</span>${extra}</div>`;
+}
+
+/* Where the shoreline sits when the tide covers the most exposed jobs holding `share` of US pay */
+function shoreFor(share) {
+  if (!share || share <= 0) return 1.2;
+  const rows = D.jobs.filter((j) => j.workers && j.median_pay).sort((a, b) => b.score - a.score);
+  const total = rows.reduce((s, j) => s + j.workers * j.median_pay, 0);
+  let acc = 0;
+  for (const j of rows) { acc += j.workers * j.median_pay; if (acc / total >= share) return j.score / 50 - 1; }
+  return -1;
 }
 
 function homePage() {
   const m = D.meta;
   return `
-  <div class="band"><div class="band-in hero">
-    <div>
-      <p class="eyebrow">Free · ${m.jobs} US jobs · 10 viewpoints</p>
-      <h1>See how much of your job <em>AI can already do.</em></h1>
-      <p class="lede">Type your job. In plain English, we'll show which parts AI handles, which parts still need you, and who's making money from it.</p>
+  <div class="band home-map">
+    <div id="umap"></div>
+    <div class="titleblock">
+      <h1>How high is the AI tide around your job?</h1>
+      <p class="lede">Each hill is a crowd of American workers. The further right, the more of their work AI can already do. Find where you stand.</p>
       <form class="ask" id="ask" novalidate>
-        <div class="field"><label for="q-job">What's your job?</label>
-          <div class="combo"><input id="q-job" type="text" autocomplete="off" placeholder="Nurse, truck driver, accountant…"></div>
+        <div class="field"><label for="q-job">Your job</label>
+          <div class="combo"><input id="q-job" type="text" autocomplete="off" placeholder="Nurse, truck driver, accountant"></div>
           <p class="err" id="job-err" hidden></p></div>
-        <div class="field"><label for="q-emp">Where do you work? <span class="hint">Optional</span></label>
+        <div class="field"><label for="q-emp">Where you work <span class="hint">(optional)</span></label>
           <div class="combo"><input id="q-emp" type="text" autocomplete="off" placeholder="Company name"></div></div>
         <div><button class="btn" type="submit">Check my job</button></div>
       </form>
-      <div class="chips"><span class="muted">Or try:</span>${POPULAR.map(([n, s]) => `<a class="chip" data-soc="${s}" href="#/job/${s}">${n}</a>`).join("")}</div>
+      <div class="chips"><span class="muted">Or try</span>${POPULAR.map(([n, s]) => `<a data-soc="${s}" href="#/job/${s}">${n}</a>`).join("")}</div>
     </div>
-    <div class="hero-map">
-      <div id="umap"></div>
-      ${mapLegend(`<span>Every dot is a job. Point at one to see it.</span>`)}
-    </div>
-  </div></div>
-  <div class="facts">
-    <div class="fact"><div class="big">${Math.round(m.workers_high / 1e6)} million</div><p>Americans work in jobs where AI can do or help with much of the work.</p></div>
-    <div class="fact"><div class="big">${m.jobs}</div><p>jobs checked, covering nearly every kind of work in the US.</p></div>
-    <div class="fact"><div class="big">10</div><p>viewpoints: real ChatGPT, Claude and Copilot usage, human experts, researchers, and our own panel of 5 AI models.</p></div>
+    <aside class="tide" aria-label="AI tide">
+      <h2>The AI tide</h2>
+      <div class="seg" role="group" aria-label="Choose a time">
+        <button type="button" class="chip" data-tide="now">Today</button>
+        <button type="button" class="chip" data-tide="5" aria-pressed="true">In 5 years</button>
+        <button type="button" class="chip" data-tide="10">In 10 years</button>
+      </div>
+      <p class="tide-read" id="tide-read"></p>
+    </aside>
   </div>
-  <h2 class="section-title">Keep exploring</h2>
-  <div class="teasers">
-    <a class="teaser" href="#/majors"><h3>College majors</h3><p>Which majors lead to the most AI-exposed jobs, with every Virginia Tech major ranked.</p><span class="go">See the majors →</span></a>
-    <a class="teaser" href="#/companies"><h3>Who sells the AI</h3><p>The public companies getting paid when AI does the work, and how their stocks have moved.</p><span class="go">See the companies →</span></a>
-    <a class="teaser" href="#/research"><h3>What we found</h3><p>Better-paid jobs are more exposed, and five AIs disagree on how much. The full research.</p><span class="go">Read the findings →</span></a>
+  ${mapLegend()}
+  <div class="atlas">
+    <div>
+      <h2>What you'll find for your job</h2>
+      <ul class="places">
+        <li><a href="#/">Your report</a><span>Which of your tasks AI can already do, which still need you, safer jobs nearby, and who sells the AI.</span></li>
+        <li><a href="#/implied">Market's bet</a><span>What AI stock prices say about your job: your chance of being automated, your lifetime pay at risk, and a hedge.</span></li>
+        <li><a href="#/majors">College majors</a><span>Which majors lead to the most exposed jobs, with every Virginia Tech major ranked.</span></li>
+        <li><a href="#/companies">AI companies</a><span>The public companies paid when AI does the work, and how their stocks moved since ChatGPT.</span></li>
+        <li><a href="#/research">Findings</a><span>What the data says overall, including where the five AI models disagree.</span></li>
+      </ul>
+    </div>
+    <aside class="note-col">
+      <p><b>${Math.round(m.workers_high / 1e6)} million</b>Americans work in jobs where AI can do or help with much of the work.</p>
+      <p><b>${m.jobs}</b>jobs on the map, covering nearly every kind of work in the US.</p>
+      <p><b>10</b>independent ratings per job, from real AI usage to human experts and five AI models.</p>
+    </aside>
   </div>`;
 }
 
 function wireHome() {
   const job = $("#q-job"), emp = $("#q-emp");
   let picked = null;
-  U = Universe.mount($("#umap"), D.jobs, { onPick: (j) => (location.hash = `#/job/${j.soc}`) });
+  U = (window.Terrain ? window.Terrain.mount : () => null)($("#umap"), D.jobs, { onPick: (j) => (location.hash = `#/job/${j.soc}`), shore: 1.2, shiftX: 0.11, dist: 3.6, height: 1.7 });
+  needImplied().then((I) => {
+    const T = I.totals;
+    const shares = { now: (T.realized_per_year || 0) * 3, 5: T.automated_5y_bn / T.pay_bn, 10: T.automated_10y_bn / T.pay_bn };
+    const words = {
+      now: (s) => `So far, real jobs data shows almost no AI job losses: about ${pct1(s)} of pay since 2022.`,
+      5: (s) => `In 5 years the water covers the most exposed jobs holding <b>${pct1(s)}</b> of US pay, the share the market expects AI to do.`,
+      10: (s) => `In 10 years it reaches jobs holding <b>${pct1(s)}</b> of US pay, if the market's longer bet is right.`,
+    };
+    const set = (k) => {
+      document.querySelectorAll("[data-tide]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tide === k)));
+      if (U && U.setShore) U.setShore(shoreFor(shares[k]));
+      const r = $("#tide-read"); if (r) r.innerHTML = words[k](shares[k]);
+    };
+    document.querySelectorAll("[data-tide]").forEach((b) => b.addEventListener("click", () => set(b.dataset.tide)));
+    set("5");
+  }).catch(() => { const t = $(".tide"); if (t) t.hidden = true; });
   const light = () => {
     const q = job.value.trim();
     U.setMatch(q.length >= 2 ? new Set(searchJobs(q, 80).map((j) => j.soc)) : null);
   };
   job.addEventListener("input", light);
-  document.querySelectorAll(".chip[data-soc]").forEach((c) => {
+  document.querySelectorAll(".chips [data-soc]").forEach((c) => {
     c.addEventListener("mouseenter", () => U.setMatch(new Set([c.dataset.soc])));
     c.addEventListener("mouseleave", light);
   });
@@ -422,23 +461,23 @@ async function jobPage(soc, at) {
   const companies = j.companies.map((k) => D.byKey[k]).filter(Boolean);
   const specific = companies.filter((c) => !c.groups.includes("ALL"));
   const platforms = companies.filter((c) => c.groups.includes("ALL"));
-  document.title = `${j.title}: AI exposure | HedgeMyJob`;
+  document.title = `${j.title}: AI exposure | eezejobs`;
 
   const hasSafer = (j.safer || []).some(([s]) => D.bySoc[s]);
   return `
   <div class="band"><div class="band-in report-band">
     <div class="report-head">
-      <a class="back" href="#/">← Check another job</a>
+      <a class="back" href="#/">Check another job</a>
       <h1>${esc(j.title)}</h1>
       <p class="meta">${j.workers ? `${fmtInt(j.workers)} people in the US do this job` : "US job"}${j.median_pay ? `. Typical pay ${fmtMoney(j.median_pay)} a year.` : "."}</p>
-      <div class="score-big"><div class="orb" id="orb" title="The orb glows hotter and churns faster the more of this job AI can touch"></div><span class="n">${Math.round(j.score)}</span><span class="of">out of 100<br>AI exposure score</span></div>
+      <div class="gauge-row"><div class="gauge" role="img" aria-label="AI exposure gauge at ${Math.round(j.score)} out of 100"><i style="height:${j.score}%"></i></div><span class="n">${Math.round(j.score)}</span><span class="of">out of 100<br>AI exposure score</span></div>
       <span class="level ${lv}">${LEVEL_WORDS[lv]}</span>
       <p class="verdict">${verdictText(j)}</p>
       <p class="muted">More exposed than ${Math.round(j.score)} out of 100 jobs.</p>
     </div>
     <div>
       <div id="umap"></div>
-      ${mapLegend(`<span><i class="pulse" aria-hidden="true"></i>Your job</span>${hasSafer ? `<span><i class="link" aria-hidden="true"></i>Safer jobs near yours</span>` : ""}`)}
+      ${mapLegend(hasSafer ? `<span><i class="route" aria-hidden="true"></i>Routes to safer jobs near yours</span>` : "")}
     </div>
   </div></div>
 
@@ -499,7 +538,7 @@ async function jobPage(soc, at) {
   </section>
 
   <div class="share"><button class="btn quiet" id="copy">Copy link to this page</button>
-    <a class="btn quiet" href="data/HedgeMyJob_model.xlsx" download>Download the Excel model</a></div>
+    <a class="btn quiet" href="data/eezejobs_model.xlsx" download>Download the Excel model</a></div>
   <p class="small">The Excel model has every job, with live formulas. Pick your job, type your pay, and it does the rest.</p>`;
 }
 
@@ -592,9 +631,9 @@ function jobsPage() {
   const groups = Object.entries(GROUPS);
   return `<div class="band"><div class="band-in explore">
       <div class="page-head"><h1>All ${D.jobs.length} jobs</h1>
-      <p class="muted">Every dot is a job. Further right means more exposed to AI, higher up means better paid. Search or pick an area below and the map lights up those jobs.</p></div>
+      <p class="muted">Every dot is a job. Further right means more exposed to AI, further back means better paid, and higher ground means more people do that work. Search or pick an area below and the map picks out those jobs.</p></div>
       <div id="umap" style="height:clamp(340px,52vh,520px)"></div>
-      ${mapLegend(`<span>Click a dot to open that job.</span>`)}
+      ${mapLegend()}
     </div></div>
     <div class="tools">
       <input id="jf" type="search" placeholder="Search jobs" aria-label="Search jobs">
@@ -605,7 +644,7 @@ function jobsPage() {
 }
 
 function wireJobs() {
-  U = Universe.mount($("#umap"), D.jobs, { onPick: (j) => (location.hash = `#/job/${j.soc}`), introMs: 1400 });
+  U = (window.Terrain ? window.Terrain.mount : () => null)($("#umap"), D.jobs, { onPick: (j) => (location.hash = `#/job/${j.soc}`), introMs: 1600 });
   const paint = () => {
     const q = $("#jf").value.trim().toLowerCase(), g = $("#jg").value, s = $("#js").value;
     let rows = D.jobs.filter((j) => (!g || j.soc.startsWith(g)) && (!q || j.title.toLowerCase().includes(q)));
@@ -643,11 +682,11 @@ function wireCompanies(root) {
 
 function companyPage(key) {
   const c = D.byKey[key];
-  if (!c) return `<a class="back" href="#/companies">← All AI companies</a><h1>We couldn't find that company.</h1>`;
+  if (!c) return `<a class="back" href="#/companies">All AI companies</a><h1>We couldn't find that company.</h1>`;
   const all = c.groups.includes("ALL");
   const targets = all ? [] : D.jobs.filter((j) => c.groups.some((g) => j.soc.startsWith(g))).sort((a, b) => (b.workers || 0) - (a.workers || 0)).slice(0, 20);
-  document.title = `${c.name} | HedgeMyJob`;
-  return `<a class="back" href="#/companies">← All AI companies</a>
+  document.title = `${c.name} | eezejobs`;
+  return `<a class="back" href="#/companies">All AI companies</a>
     <section class="block">${companyRow(c, true)}</section>
     <section class="block"><h2>Jobs ${esc(c.name)}'s AI does work for</h2>
       ${all ? `<p class="muted">${esc(c.name)} sells general AI used in almost every office job.</p>` :
@@ -812,7 +851,7 @@ function majorJobs(m) {
     <p class="muted">${m.high_share}% of people in these jobs are in high-exposure work.${m.pay ? ` Typical pay across them: <b>${fmtMoney(m.pay)}</b> a year.` : ""}
     ${m.n_jobs > jobs.length ? `Showing the ${jobs.length} biggest of ${m.n_jobs} jobs.` : ""}${m.n_jobs <= 2 ? " The official list links this major to only a few jobs, so treat this score as rough." : ""}
     ${m.vt_name && m.vt_name !== m.name ? `<br><span class="small">Reported to the government as: ${esc(m.name)}</span>` : ""}</p>
-    ${jobs.map((j) => `<a class="jobrow" href="#/job/${j.soc}"><span>${esc(j.title)}<br><span class="small">${j.workers ? fmtInt(j.workers) + " workers" : ""}${j.median_pay ? " · " + fmtMoney(j.median_pay) : ""}</span></span>
+    ${jobs.map((j) => `<a class="jobrow" href="#/job/${j.soc}"><span>${esc(j.title)}<br><span class="small">${j.workers ? fmtInt(j.workers) + " workers" : ""}${j.median_pay ? ", typical pay " + fmtMoney(j.median_pay) : ""}</span></span>
       <span class="bar" aria-hidden="true"><span style="width:${j.score}%;background:${colorFor(j.score)}"></span></span><b>${Math.round(j.score)}</b></a>`).join("")}
   </div>`;
 }
@@ -828,7 +867,7 @@ function wireMajors() {
       pay: (a, b) => (b.pay || 0) - (a.pay || 0), az: (a, b) => title(a).localeCompare(title(b)) };
     rows.sort(sorters[s]);
     $("#mlist").innerHTML = rows.length ? rows.map((m) => `<details class="maj"><summary class="jobrow">
-      <span>${esc(title(m))}<br><span class="small">${esc(m.family)} · ${fmtInt(m[key])} graduates${where === "vt" ? " at VT a year" : " a year"}</span></span>
+      <span>${esc(title(m))}<br><span class="small">${esc(m.family)}, ${fmtInt(m[key])} graduates${where === "vt" ? " at VT a year" : " a year"}</span></span>
       <span class="bar" aria-hidden="true"><span style="width:${m.score}%;background:${colorFor(m.score)}"></span></span>
       <b title="AI exposure score out of 100">${Math.round(m.score)}</b></summary>${majorJobs(m)}</details>`).join("")
       : `<p class="muted">No majors match. Try a shorter word.</p>`;
@@ -870,22 +909,22 @@ async function impliedPage() {
   const maxChg = Math.max(...comps.map((c) => Math.abs(c.now - c.before)));
   const asOf = new Date(I.as_of + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
-  return `
-  <div class="band"><div class="band-in implied-hero">
-    <p class="eyebrow">Part 2 · Implied Automation</p>
-    <h1>What Wall Street is betting AI will do to jobs.</h1>
-    <p class="lede">Traders read "implied volatility" out of option prices. We read <b>implied automation</b> out of AI stock prices: run each company's valuation backwards, find the revenue the market expects from AI, and match it to the paychecks it would replace.</p>
+  return `${impliedTool()}
+  <h2 class="section-title">The research behind it</h2>
+  <section class="block ia-big">
+    <h2>The big picture: what the whole market is betting</h2>
+    <p class="muted">Traders read "implied volatility" out of option prices. We read <b>implied automation</b> out of AI stock prices: run each company's valuation backwards, find the revenue the market expects from AI, and match it to the paychecks it would replace.</p>
     <div class="bignums">
-      <div><span class="n">${pct1(share5)}</span><span>of US pay the market expects AI to do within 5 years<br><b>${bn(T.automated_5y_bn)}</b> a year · range ${pct1(T.automated_5y_lo_bn / T.pay_bn)} to ${pct1(T.automated_5y_hi_bn / T.pay_bn)}</span></div>
+      <div><span class="n">${pct1(share5)}</span><span>of US pay the market expects AI to do within 5 years<br><b>${bn(T.automated_5y_bn)}</b> a year, range ${pct1(T.automated_5y_lo_bn / T.pay_bn)} to ${pct1(T.automated_5y_hi_bn / T.pay_bn)}</span></div>
       <div><span class="n">${pct1(T.automated_10y_bn / T.pay_bn)}</span><span>within 10 years, if the market's longer view is right</span></div>
     </div>
     <p class="small">As of ${asOf}. Built from ${comps.length} US-listed AI sellers and ${Object.keys(I.jobs).length} jobs. Research estimate, not a forecast or advice.</p>
-  </div></div>
+  </section>
 
   <section class="block">
     <h2>How the market's bet grew since ChatGPT</h2>
     <p class="muted">Share of US pay the stock market prices AI to do within 5 years, re-estimated every month from that month's prices and the filings public at the time.</p>
-    ${lineChart(curveDates, [{ name: "Market-implied automation, 5 years", color: "var(--hi)", values: I.curve.map((c) => c[1]) }],
+    ${lineChart(curveDates, [{ name: "Market-implied automation, 5 years", color: "var(--t-high)", values: I.curve.map((c) => c[1]) }],
       (v) => (v * 100).toFixed(v < 0.1 ? 1 : 0) + "%", { base: 0, label: "Market-implied share of US pay automated within 5 years, by month" })}
   </section>
 
@@ -914,7 +953,7 @@ async function impliedPage() {
       const name = D.byKey[c.sym]?.name || c.sym;
       return `<a class="wl-row" href="#/company/${c.sym}"><span>${esc(name)} <span class="small">${esc(c.sym)}</span></span>
         <span class="wl-track" aria-hidden="true"><span class="${d >= 0 ? "pos" : "neg"}" style="${d >= 0 ? "left:50%" : `left:${50 - w}%`};width:${w}%"></span></span>
-        <b class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)} pts</b><span class="small wl-from">${(c.before * 100).toFixed(0)}% → ${(c.now * 100).toFixed(0)}%</span></a>`;
+        <b class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)} pts</b><span class="small wl-from">${(c.before * 100).toFixed(0)}% to ${(c.now * 100).toFixed(0)}%</span></a>`;
     }).join("")}</div>
   </section>
 
@@ -963,6 +1002,214 @@ function impliedSection(soc) {
   </section>`;
 }
 
+/* ---------- Implied Automation tool: your job, priced by Wall Street ---------- */
+// Same formulas as the engine (Julia hazard bootstrap and expected career value, Haskell insurance legs)
+const IA = { knots: [1, 3, 5, 10], rate: 0.04, drift: 0.01, cut: 0.2, gap: 0.5 };
+
+function iaHazard(F) {
+  const lam = []; let prevS = 1, prevT = 0;
+  IA.knots.forEach((t, k) => {
+    let s = Math.min(prevS, Math.max(1e-9, 1 - (F[k] ?? 0)));
+    lam.push(Math.max(0, -Math.log(s / prevS) / (t - prevT)));
+    prevS = s; prevT = t;
+  });
+  return lam;
+}
+function iaCumHaz(lam, t) {
+  let total = 0, prev = 0;
+  for (let k = 0; k < IA.knots.length; k++) {
+    const stop = Math.min(t, IA.knots[k]);
+    if (stop > prev) total += lam[k] * (stop - prev);
+    prev = IA.knots[k];
+    if (t <= prev) return total;
+  }
+  return total + lam[lam.length - 1] * (t - prev);
+}
+const iaSurv = (lam, t) => Math.exp(-iaCumHaz(lam, t));
+const iaLamAt = (lam, t) => { const k = IA.knots.findIndex((x) => t < x); return k < 0 ? lam[lam.length - 1] : lam[k]; };
+
+function iaCareer(lam, pay, years) {
+  let ai = 0, none = 0;
+  for (let y = 1; y <= years; y++) {
+    const w = pay * Math.exp(IA.drift * y) * Math.exp(-IA.rate * y);
+    const s = iaSurv(lam, y), sPrev = iaSurv(lam, y - 1);
+    none += w;
+    ai += w * (s + (1 - s) * (1 - IA.cut) - (sPrev - s) * IA.gap);
+  }
+  return { ai, none };
+}
+function iaInsurance(lam, years = 5) {
+  const steps = years * 52, h = years / steps;
+  let prot = 0;
+  for (let i = 0; i <= steps; i++) {
+    const u = i * h, f = iaLamAt(lam, u) * iaSurv(lam, u) * Math.exp(-IA.rate * u);
+    prot += (i === 0 || i === steps ? 0.5 : 1) * f * h;
+  }
+  let annuity = 0;
+  for (let k = 1; k <= years; k++) annuity += iaSurv(lam, k) * Math.exp(-IA.rate * k);
+  return prot / annuity;
+}
+function iaCurve(series, color) {
+  const W = 440, H = 210, L = 42, R = 12, T = 12, B = 28;
+  const x = (t) => L + (t / 10) * (W - L - R), y = (v) => T + (1 - v) * (H - T - B);
+  const grid = [0, 0.25, 0.5, 0.75, 1].map((v) => `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v * 100}%</text>`).join("");
+  const xs = [0, 2, 4, 6, 8, 10].map((t) => `<text x="${x(t)}" y="${H - 8}" text-anchor="middle">${t === 0 ? "Now" : t + " yrs"}</text>`).join("");
+  const paths = series.map((s) => {
+    let d = "";
+    for (let i = 0; i <= 100; i++) { const t = i / 10; d += `${i ? "L" : "M"}${x(t).toFixed(1)},${y(iaSurv(s.lam, t)).toFixed(1)}`; }
+    return `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.main ? 3 : 2}" stroke-dasharray="${s.main ? "" : "5 5"}" stroke-linecap="round"/>`;
+  }).join("");
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Chance the job is still not automated, over the next 10 years">${grid}${xs}${paths}</svg>`;
+}
+
+function impliedTool() {
+  return `
+  <div class="band"><div class="band-in ia-tool">
+    <div class="ia-intro">
+      <h1>Your job, priced by Wall Street.</h1>
+      <p class="lede">AI stocks are priced on the money they're expected to make, and most of it would come from doing work people are paid for today. We work backwards from those prices to your job, then turn it into your numbers.</p>
+    </div>
+    <form class="ask ia-form" id="ia-form" novalidate>
+      <div class="field"><label for="ia-job">Your job</label><div class="combo"><input id="ia-job" type="text" autocomplete="off" placeholder="Accountant, nurse, software developer…"></div></div>
+      <div class="ia-row">
+        <div class="field"><label for="ia-pay">Your yearly pay</label><input id="ia-pay" type="text" inputmode="numeric" placeholder="$65,000"></div>
+        <div class="field"><label for="ia-years">Years you'll keep working</label><input id="ia-years" type="text" inputmode="numeric" value="30"></div>
+      </div>
+      <div class="field"><label for="ia-save">Savings you could set aside to hedge <span class="hint">Optional</span></label><input id="ia-save" type="text" inputmode="numeric" value="$5,000"></div>
+      <div class="field"><span class="lbl">How fast AI arrives</span>
+        <div class="seg ia-speed" role="group" aria-label="How fast AI arrives">
+          <button type="button" class="chip" data-speed="lo">Slower</button>
+          <button type="button" class="chip" data-speed="" aria-pressed="true">Market's bet</button>
+          <button type="button" class="chip" data-speed="hi">Faster</button>
+        </div></div>
+    </form>
+  </div></div>
+  <div id="ia-out" aria-live="polite"><p class="muted" style="margin-top:28px">Pick your job above to see your numbers.</p></div>
+  <section class="block ia-mc" id="ia-mc" hidden>
+    <div class="mc-head"><h2>100,000 of your possible careers</h2><span class="engine-badge" id="mc-badge"></span></div>
+    <p class="muted" id="mc-text"></p>
+    <div class="mc-chart" id="mc-chart"><div class="mc-marks" id="mc-marks"></div></div>
+    <div class="mc-axis"><span id="mc-lo"></span><span>Lifetime pay, in today's dollars</span><span id="mc-hi"></span></div>
+    <div class="legend"><span><i style="background:var(--t-high)"></i>With AI risk</span><span><i style="background:var(--sea)"></i>If AI never touched your job</span></div>
+    <p class="small">Every time you change an input, your browser simulates 100,000 careers: pay that drifts and wobbles each year, and a chance of the job being automated (a gap in pay, then a lower-paid job). Simulated by a C++ engine compiled to WebAssembly and drawn by a GLSL shader.</p>
+  </section>`;
+}
+
+let IA_HIST = null, IA_TIMER = 0;
+function iaSimulate(soc, pay, years, speed) {
+  const box = $("#ia-mc");
+  const x = D.implied && D.implied.jobs[soc];
+  if (!box || !x || typeof Engine === "undefined" || !Engine.ok) { if (box) box.hidden = true; return; }
+  box.hidden = false;
+  if (!IA_HIST && typeof Shaders !== "undefined") { IA_HIST = Shaders.histogram($("#mc-chart")); if (IA_HIST) FX.push(IA_HIST); }
+  Engine.setCurve(IA.knots.map((h) => x[`a${h}${speed ? "_" + speed : ""}`] ?? x[`a${h}`]));
+  const r = Engine.simulate(pay, years, 100000, 2026);
+  if (IA_HIST) IA_HIST.update(r.histAI, r.histNone);
+  const pos = (v) => Math.max(0, Math.min(100, ((v - r.lo) / (r.hi - r.lo)) * 100));
+  $("#mc-marks").innerHTML = [[r.p5, "Worst 1 in 20"], [r.p50, "Middle"]].map(([v, t]) =>
+    `<span class="mc-mark" style="left:${pos(v)}%"><b>${fmtMoney(v)}</b>${t}</span>`).join("");
+  $("#mc-lo").textContent = fmtMoney(r.lo);
+  $("#mc-hi").textContent = fmtMoney(r.hi);
+  $("#mc-badge").textContent = `${Math.round(r.paths).toLocaleString("en-US")} careers in ${r.ms < 10 ? r.ms.toFixed(1) : Math.round(r.ms)} ms, computed in your browser by our C++ engine (WebAssembly)`;
+  $("#mc-text").innerHTML = `In half of these futures you earn more than <b>${fmtMoney(r.p50)}</b> over your career. In the worst 1 in 20, less than <b>${fmtMoney(r.p5)}</b>. ` +
+    `On average, AI risk costs <b>${fmtMoney(r.meanNone - r.meanAI)}</b>, and the job is automated within 10 years in <b>${pct1(r.prob10)}</b> of futures.`;
+}
+
+function iaResult(soc, pay, years, save, speed) {
+  const I = D.implied, x = I.jobs[soc], j = D.bySoc[soc];
+  if (!x || !j) return `<section class="block"><h2>No market data for this job yet</h2><p class="muted">Try a related job title.</p></section>`;
+  const F = (t) => IA.knots.map((h) => x[`a${h}${t}`] ?? x[`a${h}`]);
+  const curveF = F(speed ? "_" + speed : "");
+  const lam = iaHazard(curveF);
+  let c, spread, p10, p5;
+  if (typeof Engine !== "undefined" && Engine.ok) {           // C++ engine in WebAssembly
+    Engine.setCurve(curveF);
+    c = Engine.career(pay, years); spread = Engine.insurance(5);
+    p10 = 1 - Engine.survival(10); p5 = 1 - Engine.survival(5);
+  } else {                                                    // same maths in JavaScript
+    c = iaCareer(lam, pay, years); spread = iaInsurance(lam);
+    p10 = 1 - iaSurv(lam, 10); p5 = 1 - iaSurv(lam, 5);
+  }
+  const loss = c.none - c.ai;
+  const share5 = x[`a5${speed ? "_" + speed : ""}`];
+  const tops = [[x.top1, x.w1], [x.top2, x.w2], [x.top3, x.w3]].filter(([t, w]) => t && w > 0);
+  const tw = tops.reduce((a, [, w]) => a + w, 0);
+  const speedWord = { lo: "if AI arrives slower than the market expects", "": "at the market's current bet", hi: "if AI arrives faster than the market expects" }[speed];
+  const curves = [
+    speed !== "lo" && { lam: iaHazard(F("_lo")), color: "var(--t-low)" },
+    speed !== "hi" && { lam: iaHazard(F("_hi")), color: "var(--t-high)" },
+    { lam, color: speed === "lo" ? "var(--t-low)" : speed === "hi" ? "var(--t-high)" : "var(--ink)", main: true },
+  ].filter(Boolean);
+  const share = `#/implied?job=${soc}&pay=${Math.round(pay)}&years=${years}&save=${Math.round(save)}${speed ? "&speed=" + speed : ""}`;
+  return `
+  <section class="block ia-result">
+    <p class="small">${esc(j.title)}, ${fmtMoney(pay)} a year, ${years} working years, ${speedWord}</p>
+    <h2 class="ia-verdict">Wall Street is pricing in AI doing <span class="hot">${pct1(share5)}</span> of this job's pay within 5 years.</h2>
+    <div class="ia-cards">
+      <div><span class="muted">Chance a job like yours is automated</span><b>${pct1(p10)}</b><span class="small">within 10 years (${pct1(p5)} within 5)</span></div>
+      <div><span class="muted">Your lifetime pay at risk</span><b class="down">${fmtMoney(loss)}</b><span class="small">${pct1(loss / c.none)} of ${fmtMoney(c.none)}, in today's dollars</span></div>
+      <div><span class="muted">Insuring one year of your pay</span><b>${fmtMoney(spread * pay)}<small>/yr</small></b><span class="small">fair price for 5 years of cover (${(spread * 100).toFixed(2)}% of pay)</span></div>
+    </div>
+    <div class="cols">
+      <div>
+        <h3>Chance your job is still safe from automation</h3>
+        ${iaCurve(curves)}
+        <div class="legend"><span><i style="background:var(--t-low)"></i>Slower AI</span><span><i style="background:var(--ink)"></i>Market's bet</span><span><i style="background:var(--t-high)"></i>Faster AI</span><span class="small">Solid line = your setting</span></div>
+      </div>
+      <div>
+        <h3>A hedge for your ${fmtMoney(save)}</h3>
+        ${tops.length && save > 0 ? `<p class="muted">These stocks rise when the market's AI bet against your job grows. Split this way, they offset about <b>${Math.round((x.variance_cut || 0) * 100)}%</b> of the swings in the market's view of your career.</p>
+        <ul class="ia-hedge">${tops.map(([t, w]) => `<li><span>${esc(D.byKey[t]?.name || t)} <a class="tick" href="https://finance.yahoo.com/quote/${t}" target="_blank" rel="noopener">${t}</a></span><b>${fmtMoney((save * w) / tw)}</b><span class="small">${Math.round((w / tw) * 100)}%</span></li>`).join("")}</ul>
+        <p class="small">A hedge cancels risk, it doesn't promise profit. It partly works by design, because the market's view of your career is read from these same stocks.</p>` :
+        `<p class="muted">Add an amount above to see how you could split it.</p>`}
+      </div>
+    </div>
+    ${x.realized_hi != null ? `<div class="note"><b>Reality check:</b> from 2022 to 2025, real employment data shows no clear AI-linked job loss for this job yet (at most about ${pct1(x.realized_hi)} a year). Markets can be early, or wrong.</div>` : ""}
+    <div class="share"><a class="btn quiet" href="#/job/${soc}">Full report for ${esc(j.title)}</a><button class="btn quiet" id="ia-copy" data-link="${share}">Copy a link to these numbers</button></div>
+    <p class="small">Research estimate from stock prices, not financial or career advice, and not a prediction about you personally.</p>
+  </section>`;
+}
+
+function wireImplied(params) {
+  const job = $("#ia-job"), pay = $("#ia-pay"), years = $("#ia-years"), save = $("#ia-save"), out = $("#ia-out");
+  const money = (s) => { const v = parseFloat(String(s).replace(/[^0-9.]/g, "")); return Number.isFinite(v) ? v : null; };
+  let soc = params.get("job") || null, speed = params.get("speed") || "";
+  const setJob = (s, keepPay) => {
+    soc = s; const j = D.bySoc[s];
+    if (!j) return;
+    job.value = j.title;
+    if (!keepPay || !pay.value) pay.value = j.median_pay ? fmtMoney(j.median_pay) : "";
+    paint();
+  };
+  const paint = () => {
+    if (!soc) return;
+    const p = money(pay.value) || D.bySoc[soc]?.median_pay || 50000;
+    const y = Math.max(1, Math.min(50, Math.round(money(years.value) || 30)));
+    const s = money(save.value) || 0;
+    out.innerHTML = iaResult(soc, p, y, s, speed);
+    clearTimeout(IA_TIMER);
+    IA_TIMER = setTimeout(() => iaSimulate(soc, p, y, speed), 60);
+    const cp = $("#ia-copy");
+    if (cp) cp.addEventListener("click", async () => {
+      const url = location.href.split("#")[0] + cp.dataset.link;
+      try { await navigator.clipboard.writeText(url); cp.textContent = "Link copied"; } catch { cp.textContent = "Copy the address bar"; }
+      history.replaceState(null, "", cp.dataset.link);
+    });
+  };
+  combo(job, async (q) => searchJobs(q), (j) => esc(j.title), (j) => setJob(j.soc, false));
+  [pay, years, save].forEach((el) => el.addEventListener("input", paint));
+  document.querySelectorAll("[data-speed]").forEach((b) => b.addEventListener("click", () => {
+    speed = b.dataset.speed;
+    document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+    paint();
+  }));
+  document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.speed === speed)));
+  if (params.get("pay")) pay.value = fmtMoney(+params.get("pay"));
+  if (params.get("years")) years.value = params.get("years");
+  if (params.get("save")) save.value = fmtMoney(+params.get("save"));
+  setJob(soc || "13-2011", !!params.get("pay"));
+}
+
 /* ---------- Router ---------- */
 let U = null;
 let FX = [];
@@ -972,6 +1219,7 @@ async function route() {
   if (U) { U.destroy(); U = null; }
   FX.forEach((f) => f && f.destroy());
   FX = [];
+  IA_HIST = null;
   main.classList.remove("enter");
   const [path, qs] = location.hash.replace(/^#/, "").split("?");
   const parts = (path || "/").split("/").filter(Boolean);
@@ -981,17 +1229,16 @@ async function route() {
     const on = a.dataset.nav === (page === "job" ? "home" : page === "company" ? "companies" : page);
     on ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current");
   });
-  document.title = "HedgeMyJob";
+  document.title = "eezejobs";
   try {
     if (page === "home") { main.innerHTML = homePage(); wireHome(); }
-    else if (page === "majors") { main.innerHTML = `<p class="loading">Loading majors…</p>`; main.innerHTML = await majorsPage(); wireMajors(); document.title = "College majors and AI · HedgeMyJob"; }
+    else if (page === "majors") { main.innerHTML = `<p class="loading">Loading majors…</p>`; main.innerHTML = await majorsPage(); wireMajors(); document.title = "College majors and AI | eezejobs"; }
     else if (page === "job") {
       main.innerHTML = `<p class="loading">Loading your report…</p>`;
       main.innerHTML = await jobPage(decodeURIComponent(parts[1] || ""), params.get("at"));
       wireToggles(main);
       const me = D.bySoc[parts[1]];
-      if (me && $("#orb") && typeof Shaders !== "undefined") FX.push(Shaders.orb($("#orb"), me.score));
-      if (me && $("#umap")) U = Universe.mount($("#umap"), D.jobs, { focus: me.soc, links: (me.safer || []).map((x) => x[0]), introMs: 1200,
+      if (me && $("#umap")) U = (window.Terrain ? window.Terrain.mount : () => null)($("#umap"), D.jobs, { focus: me.soc, links: (me.safer || []).map((x) => x[0]), introMs: 1200,
         onPick: (j) => (location.hash = `#/job/${j.soc}`), label: `Map of all jobs with ${me.title} highlighted` });
       if (params.get("at")) fillEmployer(params.get("at"), parts[1]);
       const add = $("#add-emp");
@@ -1006,7 +1253,7 @@ async function route() {
         try { await navigator.clipboard.writeText(location.href); copy.textContent = "Link copied"; } catch { copy.textContent = "Copy the address bar to share"; }
       });
     }
-    else if (page === "implied") { main.innerHTML = `<p class="loading">Loading the market's bet…</p>`; main.innerHTML = await impliedPage(); document.title = "Implied Automation · HedgeMyJob"; }
+    else if (page === "implied") { main.innerHTML = `<p class="loading">Loading the market's bet…</p>`; main.innerHTML = await impliedPage(); wireImplied(params); document.title = "Your job, priced by Wall Street | eezejobs"; }
     else if (page === "jobs") { main.innerHTML = jobsPage(); wireJobs(); }
     else if (page === "companies") { main.innerHTML = companiesPage(); wireCompanies(main); }
     else if (page === "company") { main.innerHTML = companyPage(decodeURIComponent(parts[1] || "")); wireToggles(main); }
@@ -1017,7 +1264,6 @@ async function route() {
   } catch (err) {
     main.innerHTML = `<h1 style="margin-top:40px">Something went wrong loading this page.</h1><p class="muted">${esc(err.message)}. Refresh the page to try again.</p>`;
   }
-  if (typeof Shaders !== "undefined") main.querySelectorAll(".band").forEach((b) => FX.push(Shaders.nebula(b)));
   window.scrollTo(0, 0);
   void main.offsetWidth;
   main.classList.add("enter");
@@ -1028,6 +1274,8 @@ async function route() {
   try {
     const [jobs, companies, series, meta, sig] = await Promise.all(
       ["jobs.json", "companies.json", "series.json", "meta.json", "signals.json"].map(getJSON));
+    if (typeof Engine !== "undefined") await Engine.ready;
+    await Promise.race([window.TerrainReady, new Promise((r) => setTimeout(r, 5000))]);
     D.jobs = jobs; D.companies = companies; D.series = series; D.meta = meta; D.signals = sig;
     jobs.forEach((j) => (D.bySoc[j.soc] = j));
     companies.forEach((c) => (D.byKey[coKey(c)] = c));

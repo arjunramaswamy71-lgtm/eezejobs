@@ -1,4 +1,4 @@
-package hedgemyjob;
+package eezejobs;
 
 /**
  * The 4-check trend score, the same rules as src/signals.py:

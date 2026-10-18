@@ -1,4 +1,4 @@
-package hedgemyjob;
+package eezejobs;
 
 /**
  * Basic price indicators. Every method returns an array the same length as the input,

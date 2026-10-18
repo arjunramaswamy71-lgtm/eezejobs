@@ -253,7 +253,7 @@ def step_export():
                      "ai_rev_5y": r.ai_rev_5y, "ai_rev_10y": r.ai_rev_10y, "labor_share": LABOR_SHARE.get(r.sym, 1.0),
                      "series": [[f"{d:%Y-%m}", v] for d, v in zip(s["date"], s["implied_growth"].round(4))]})
     out["companies"] = sorted(comp, key=lambda c: -(c["now"] - c["before"]))
-    jobs = lat[["soc", "a1", "a3", "a5", "a10", "a5_lo", "a5_hi", "a10_lo", "a10_hi"]].copy()
+    jobs = lat[["soc"] + [f"a{h}{t}" for t in ["", "_lo", "_hi"] for h in HORIZONS]].copy()
     for name, cols in [("realized.csv", ["realized_mean", "realized_lo", "realized_hi", "emp_change"]),
                        ("careers.csv", ["hc_mean", "hc_no_ai", "ai_haircut", "hc_p5", "prob_automated_10y"]),
                        ("contracts.csv", ["survival_5y", "cds_spread_pct", "cds_premium_dollars", "income_floor_pv_dollars"]),

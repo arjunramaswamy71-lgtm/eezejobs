@@ -191,7 +191,98 @@ void main() {
     };
   }
 
+  /* Distribution of simulated lifetime pay, drawn entirely in a fragment shader.
+     The histogram bins arrive as a 64x1 texture (red = with AI risk, green = without); linear texture
+     filtering smooths them, and every pixel decides for itself whether it sits under a curve or on its glowing edge. */
+  const HIST_FS = `
+precision highp float;
+uniform vec2 u_res; uniform sampler2D u_bins; uniform float u_t; uniform vec3 u_hot; uniform vec3 u_cool;
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_res;
+  vec4 b = texture2D(u_bins, vec2(uv.x, 0.5));
+  float hA = b.r * u_t * 0.88, hN = b.g * u_t * 0.88;
+  float px = 1.0 / u_res.y;
+  float underA = 1.0 - smoothstep(hA - px, hA + px, uv.y);
+  float underN = 1.0 - smoothstep(hN - px, hN + px, uv.y);
+  float edgeA = exp(-abs(uv.y - hA) / (2.5 * px)) * step(0.002, hA);
+  float lineN = exp(-abs(uv.y - hN) / (1.6 * px)) * step(0.002, hN);
+  vec3 fill = mix(u_hot * 0.55, u_hot, clamp(uv.y / max(hA, 0.001), 0.0, 1.0));
+  vec3 col = fill * underA * 0.55 + u_hot * edgeA + u_cool * lineN + u_cool * underN * 0.06;
+  float a = clamp(underA * 0.55 + edgeA + lineN + underN * 0.06, 0.0, 1.0);
+  for (int i = 1; i < 4; i++) {                       // faint horizontal guides
+    float g = 1.0 - smoothstep(0.0, px * 1.2, abs(uv.y - float(i) * 0.22));
+    a = max(a, g * 0.07); col = max(col, vec3(0.5) * g * 0.07);
+  }
+  gl_FragColor = vec4(col * (a > 0.0 ? 1.0 : 0.0), a);
+}`;
+
+  function histogram(el, colors = { hot: [0.66, 0.28, 0.23], cool: [0.17, 0.42, 0.53] }) {
+    const canvas = document.createElement("canvas");
+    canvas.className = "fx-hist";
+    canvas.setAttribute("aria-hidden", "true");
+    el.prepend(canvas);
+    const gl = canvas.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false });
+    if (!gl) { canvas.remove(); return null; }
+    let prog;
+    try {
+      const make = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+      prog = gl.createProgram();
+      gl.attachShader(prog, make(gl.VERTEX_SHADER, QUAD_VS));
+      gl.attachShader(prog, make(gl.FRAGMENT_SHADER, HIST_FS));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    } catch (err) { console.warn("Histogram shader failed:", err); canvas.remove(); return null; }
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "a_pos");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]
+      .forEach(([k, v]) => gl.texParameteri(gl.TEXTURE_2D, k, v));
+    const U = (n) => gl.getUniformLocation(prog, n);
+    gl.uniform1i(U("u_bins"), 0);
+    gl.uniform3fv(U("u_hot"), colors.hot);
+    gl.uniform3fv(U("u_cool"), colors.cool);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    let raf = 0, t0 = 0;
+    function resize() {
+      const r = canvas.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(U("u_res"), canvas.width, canvas.height);
+    }
+    function frame() {
+      const t = REDUCED ? 1 : Math.min(1, (performance.now() - t0) / 550);
+      gl.uniform1f(U("u_t"), 1 - Math.pow(1 - t, 3));
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      raf = t < 1 ? requestAnimationFrame(frame) : 0;
+    }
+    const ro = new ResizeObserver(() => { resize(); if (!raf) frame(); });
+    ro.observe(canvas);
+    resize();
+    return {
+      update(histAI, histNone, animate = true) {
+        const n = histAI.length, max = Math.max(1, ...histAI, ...histNone);
+        const px = new Uint8Array(n * 4);
+        for (let i = 0; i < n; i++) { px[i * 4] = Math.round((histAI[i] / max) * 255); px[i * 4 + 1] = Math.round((histNone[i] / max) * 255); px[i * 4 + 3] = 255; }
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, n, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, px);
+        t0 = animate ? performance.now() : 0;
+        cancelAnimationFrame(raf);
+        frame();
+      },
+      destroy() { cancelAnimationFrame(raf); ro.disconnect(); const ext = gl.getExtension("WEBGL_lose_context"); if (ext) ext.loseContext(); },
+    };
+  }
+
   return {
+    histogram,
     nebula(band) {
       return setup(band, NEBULA_FS, { className: "fx-nebula", resolution: 0.5, timeOffset: 40000 });
     },
